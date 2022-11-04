@@ -20,7 +20,7 @@ def main():
             i = i + 1
         j = j + 1
 
-    print(g)
+    print(g.procura_BFS(g.getStart(), "F"))
 
     file.close()
 
