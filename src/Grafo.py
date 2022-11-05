@@ -16,7 +16,8 @@ class Grafo:
             out = out + str(key) + ": " + str(self.grafo[key]) + "\n"
         return out
 
-    def add_edge(self, node1,x1,y1, node2,x2,y2):
+    # Adiciona arco
+    def addEdge(self, node1,x1,y1, node2,x2,y2):
         n1 = Nodo(node1,x1,y1)
         n2 = Nodo(node2,x2,y2)
         peso = 1
@@ -40,59 +41,63 @@ class Grafo:
             else:peso = 1
             self.grafo[n2].add((n1, peso))
 
+    # Localiza o nodo inicial
     def getStart(self):
         for start in self.lnodos:
-            if start.tipo == "P":
+            if start.type == "P":
                 return start
         return None
 
-    def get_arc_cost(self, node1, node2):
-        custoT=math.inf
-        a=self.grafo[node1]   
-        for (nodo,custo) in a:
-            if nodo==node2:
-                custoT=custo
+    # Retorna o custo do arco
+    def getArcCost(self, node1, node2):
+        custoT = math.inf
+        a = self.grafo[node1]   
+        for (node, cost) in a:
+            if node == node2:
+                custoT = cost
 
         return custoT
 
-    def calcula_custo(self, caminho):
-        teste=caminho
-        custo=0
-        i=0
-        while i+1 < len(teste):
-             custo=custo + self.get_arc_cost(teste[i], teste[i+1])
-             i=i+1
-        return custo    
+    # Calcula o custo do caminho encontrado
+    def calculateCost(self, path):
+        teste = path 
+        cost = 0
+        i = 0
+        while i + 1 < len(teste):
+             cost = cost + self.getArcCost(teste[i], teste[i+1])
+             i = i + 1
+        return cost    
 
-    def procura_BFS(self, start, end):
+    # Algoritmo de procura BFS
+    def BFSSearch(self, start, end):
         q = Queue()
-        visitado = set()
+        visited = set()
 
         q.put(start)
-        visitado.add(start)
+        visited.add(start)
         p = {}
         p[start] = None
 
-        path_found = False
-        while not q.empty() and path_found == False:
+        pathFound = False
+        while not q.empty() and pathFound == False:
             n = q.get()
-            if n.getTipo() == end:
-                path_found = True
+            if n.gettype() == end:
+                pathFound = True
             else:
-                for (adjacente, peso) in self.grafo[n]:
-                    if adjacente not in visitado:
-                        visitado.add(adjacente)
-                        q.put(adjacente)
-                        p[adjacente] = n
-                    if adjacente.getTipo() == end:
-                        endNode = adjacente
-                        path_found = True
+                for (adjacent, cost) in self.grafo[n]:
+                    if adjacent not in visited:
+                        visited.add(adjacent)
+                        q.put(adjacent)
+                        p[adjacent] = n
+                    if adjacent.gettype() == end:
+                        endNode = adjacent
+                        pathFound = True
         path = []
-        if path_found == True:
+        if pathFound == True:
             path.append(endNode)
             while p[endNode] is not None:
                 path.append(p[endNode])
                 endNode = p[endNode]
             path.reverse()
-            custoT = self.calcula_custo(path)
+            custoT = self.calculateCost(path)
             return (path, custoT)

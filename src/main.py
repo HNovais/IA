@@ -14,13 +14,13 @@ def main():
         i = 0
         for char in line[:-1]:
             if i < len(line) - 2:
-                g.add_edge(maze[j][i], i, j, maze[j][i+1], i+1, j)
+                g.addEdge(maze[j][i], i, j, maze[j][i+1], i+1, j)
             if j < len(maze) - 1:
-                g.add_edge(maze[j][i], i, j, maze[j+1][i], i, j+1)
+                g.addEdge(maze[j][i], i, j, maze[j+1][i], i, j+1)
             i = i + 1
         j = j + 1
 
-    print(g.procura_BFS(g.getStart(), "F"))
+    print(g.BFSSearch(g.getStart(), "F"))
 
     file.close()
 
