@@ -8,19 +8,42 @@ def main():
     file = open(r"d:\Universidade\IA\Trabalho\IA-main\src\maze.txt","r")
     maze = file.readlines()
 
-    # Criar ligações entre nodos
-    j = 0
-    for line in maze:
-        i = 0
-        for char in line[:-1]:
-            if i < len(line) - 2:
-                g.addEdge(maze[j][i], i, j, maze[j][i+1], i+1, j)
-            if j < len(maze) - 1:
-                g.addEdge(maze[j][i], i, j, maze[j+1][i], i, j+1)
-            i = i + 1
-        j = j + 1
+    g.addEdges(maze)
 
-    print(g.BFSSearch(g.getStart(), "F"))
+    saida = -1
+    while saida != 0:
+        print("1-Imprimir Grafo")
+        print("2-Imprimir nodos de Grafo")
+        print("3-DFS")
+        print("4-BFS")
+        print("0-Saír")
+
+        saida = int(input("introduza a sua opcao-> "))
+        if saida == 0:
+            print("saindo.......")
+        elif saida == 1:
+            # Escrever o grafo como string
+            print(g)
+            l = input("prima enter para continuar")
+        elif saida == 2:
+            # Imprimir as chaves do dicionario que representa o grafo
+            print(g.grafo.keys())
+            l = input("prima enter para continuar")
+        elif saida == 3:
+            # Efetuar  pesquisa de caminho entre nodo inicial e final com DFS
+            inicio = g.getStart(input("Nodo inicial->"))
+            fim = input("Nodo final->")
+            print(g.DFSSearch(inicio, fim, path=[], visited=set()))
+            l = input("prima enter para continuar")
+        elif saida == 4:
+            # Efetuar  pesquisa de caminho entre nodo inicial e final com Gulosa
+            inicio = g.getStart(input("Nodo inicial->"))
+            fim = input("Nodo final->")
+            print(g.BFSSearch(inicio, fim))
+            l = input("prima enter para continuar")
+        else:
+            print("Opção inválida...")
+            l = input("prima enter para continuar")
 
     file.close()
 

@@ -42,9 +42,9 @@ class Grafo:
             self.grafo[n2].add((n1, peso))
 
     # Localiza o nodo inicial
-    def getStart(self):
+    def getStart(self, node):
         for start in self.lnodos:
-            if start.type == "P":
+            if start.type == node:
                 return start
         return None
 
@@ -67,6 +67,22 @@ class Grafo:
              cost = cost + self.getArcCost(teste[i], teste[i+1])
              i = i + 1
         return cost    
+
+    # Algoritmo de procura DFS
+    def DFSSearch(self, start, end, path=[], visited=set()):
+        path.append(start)
+        visited.add(start)
+
+        if start.gettype() == end:
+            custoT = self.calculateCost(path)
+            return (path, custoT)
+        for (adjacente, peso) in self.grafo[start]:
+            if adjacente not in visited:
+                resultado = self.DFSSearch(adjacente, end, path, visited)
+                if resultado is not None:
+                    return resultado
+        path.pop()  
+        return None
 
     # Algoritmo de procura BFS
     def BFSSearch(self, start, end):
@@ -101,3 +117,18 @@ class Grafo:
             path.reverse()
             custoT = self.calculateCost(path)
             return (path, custoT)
+
+    # Criar ligações entre nodos
+    def addEdges(self, maze):
+        j = 0
+        for line in maze:
+            i = 0
+            for char in line[:-1]:
+                if i < len(line) - 2:
+                    if not (maze[j][i] == "X" and maze[j][i+1] == "X"):
+                        self.addEdge(maze[j][i], i, j, maze[j][i+1], i+1, j)
+                if j < len(maze) - 1:
+                    if not (maze[j][i] == "X" and maze[j+1][i] == "X"):
+                        self.addEdge(maze[j][i], i, j, maze[j+1][i], i, j+1)
+                i = i + 1
+            j = j + 1
