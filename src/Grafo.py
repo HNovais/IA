@@ -100,14 +100,50 @@ class Grafo:
             if n.gettype() == end:
                 pathFound = True
             else:
-                for (adjacent, cost) in self.grafo[n]:
+                if n.gettype() != 'X':
+                    for (adjacent, cost) in self.grafo[n]:
+                        if adjacent not in visited:
+                            visited.add(adjacent)
+                            q.put(adjacent)
+                            p[adjacent] = n
+                        if adjacent.gettype() == end:
+                            endNode = adjacent
+                            pathFound = True
+        path = []
+        if pathFound == True:
+            path.append(endNode)
+            while p[endNode] is not None:
+                path.append(p[endNode])
+                endNode = p[endNode]
+            path.reverse()
+            custoT = self.calculateCost(path)
+            return (path, custoT)
+
+    def Uniform(self, start, end):
+        q = list()
+        q.append((start,0))
+
+        visited = list()
+        visited.append(start)
+        p = {}
+        p[start] = None
+
+        pathFound = False
+        while len(q)>0 and pathFound == False:
+            q.sort(key=lambda x: x[1])
+            n = q.pop(0)
+            if n[0].gettype() == end:
+                pathFound = True
+            else:
+                for (adjacent, cost) in self.grafo[n[0]]:
                     if adjacent not in visited:
-                        visited.add(adjacent)
-                        q.put(adjacent)
-                        p[adjacent] = n
+                        visited.append(adjacent)
+                        q.append((adjacent,n[1]+self.getArcCost(n[0],adjacent)))
+                        p[adjacent] = n[0]
                     if adjacent.gettype() == end:
                         endNode = adjacent
                         pathFound = True
+
         path = []
         if pathFound == True:
             path.append(endNode)
