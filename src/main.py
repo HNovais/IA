@@ -6,7 +6,7 @@ def main():
     g = Grafo()
 
     # Abrir ficheiro .txt com a pista
-    file = open(r"d:\Universidade\IA\Trabalho\IA-main\src\maze.txt","r")
+    file = open(r"maze.txt","r")
     maze = file.readlines()
 
     g.addEdges(maze)
@@ -25,11 +25,12 @@ def main():
             print("saindo.......")
         elif saida == 1:
             # Escrever o grafo como string
-            print(g)
+            print(g.__str__())
             l = input("prima enter para continuar")
         elif saida == 2:
             # Imprimir as chaves do dicionario que representa o grafo
-            print(g.grafo.keys())
+            for k in g.grafo.keys():
+                print(k.__str__())
             l = input("prima enter para continuar")
         elif saida == 3:
             # Efetuar  pesquisa de caminho entre nodo inicial e final com DFS

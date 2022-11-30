@@ -8,7 +8,7 @@ class Nodo:
         self.cord = nodo.getCord()
 
     def __str__(self):
-        return "node " + self.type + ":" + str(self.cord)
+        return self.type + ":" + str(self.cord)
 
     def gettype(self):
         return self.type

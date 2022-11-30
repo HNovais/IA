@@ -11,7 +11,7 @@ class Grafo:
         self.start = None
 
     def __str__(self):
-        out = ""
+        out = "\033[34mGrafo\033[m\n"
         for key in self.grafo.keys():
             out = out + str(key) + ": " + str(self.grafo[key]) + "\n"
         return out
@@ -76,11 +76,12 @@ class Grafo:
         if start.gettype() == end:
             custoT = self.calculateCost(path)
             return (path, custoT)
-        for (adjacente, peso) in self.grafo[start]:
-            if adjacente not in visited:
-                resultado = self.DFSSearch(adjacente, end, path, visited)
-                if resultado is not None:
-                    return resultado
+        if start.gettype() != 'X':
+            for (adjacente, peso) in self.grafo[start]:
+                if adjacente not in visited:
+                    resultado = self.DFSSearch(adjacente, end, path, visited)
+                    if resultado is not None:
+                        return resultado
         path.pop()  
         return None
 
@@ -91,7 +92,7 @@ class Grafo:
 
         q.put(start)
         visited.add(start)
-        p = {}
+        p = dict()
         p[start] = None
 
         pathFound = False
@@ -135,14 +136,15 @@ class Grafo:
             if n[0].gettype() == end:
                 pathFound = True
             else:
-                for (adjacent, cost) in self.grafo[n[0]]:
-                    if adjacent not in visited:
-                        visited.append(adjacent)
-                        q.append((adjacent,n[1]+self.getArcCost(n[0],adjacent)))
-                        p[adjacent] = n[0]
-                    if adjacent.gettype() == end:
-                        endNode = adjacent
-                        pathFound = True
+                if n[0].gettype() != 'X':
+                    for (adjacent, cost) in self.grafo[n[0]]:
+                        if adjacent not in visited:
+                            visited.append(adjacent)
+                            q.append((adjacent,n[1]+self.getArcCost(n[0],adjacent)))
+                            p[adjacent] = n[0]
+                        if adjacent.gettype() == end:
+                            endNode = adjacent
+                            pathFound = True
 
         path = []
         if pathFound == True:
@@ -161,10 +163,16 @@ class Grafo:
             i = 0
             for char in line[:-1]:
                 if i < len(line) - 2:
-                    if not (maze[j][i] == "X" and maze[j][i+1] == "X"):
+                    if not (char == "X" and maze[j][i+1] == "X"):
                         self.addEdge(maze[j][i], i, j, maze[j][i+1], i+1, j)
                 if j < len(maze) - 1:
-                    if not (maze[j][i] == "X" and maze[j+1][i] == "X"):
+                    if i < len(line) - 2:
+                        if not (char == "X" and maze[j+1][i + 1] == "X"):
+                            self.addEdge(maze[j][i], i, j, maze[j+1][i + 1], i + 1, j+1)
+                    if not (char == "X" and maze[j+1][i] == "X"):
                         self.addEdge(maze[j][i], i, j, maze[j+1][i], i, j+1)
+                    if i>0 :
+                        if not (char == "X" and maze[j + 1][i-1] == "X"):
+                            self.addEdge(maze[j][i], i, j, maze[j + 1][i-1], i-1, j + 1)
                 i = i + 1
             j = j + 1
