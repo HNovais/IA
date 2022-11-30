@@ -8,7 +8,8 @@ class Grafo:
         self.lnodos = []
         self.directed = directed
         self.grafo = {}
-        self.start = None
+        self.start = "P"
+        self.end = "F"
 
     def __str__(self):
         out = "\033[34mGrafo\033[m\n"
