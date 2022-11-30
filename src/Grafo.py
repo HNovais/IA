@@ -165,15 +165,15 @@ class Grafo:
             for char in line[:-1]:
                 if i < len(line) - 2:
                     if not (char == "X" and maze[j][i+1] == "X"):
-                        self.addEdge(maze[j][i], i, j, maze[j][i+1], i+1, j)
+                        self.addEdge(maze[j][i], j, i, maze[j][i+1], j,i+1)
                 if j < len(maze) - 1:
                     if i < len(line) - 2:
                         if not (char == "X" and maze[j+1][i + 1] == "X"):
-                            self.addEdge(maze[j][i], i, j, maze[j+1][i + 1], i + 1, j+1)
+                            self.addEdge(maze[j][i], j, i, maze[j+1][i + 1], j + 1, i+1)
                     if not (char == "X" and maze[j+1][i] == "X"):
-                        self.addEdge(maze[j][i], i, j, maze[j+1][i], i, j+1)
+                        self.addEdge(maze[j][i], j, i, maze[j+1][i], j+1, i)
                     if i>0 :
                         if not (char == "X" and maze[j + 1][i-1] == "X"):
-                            self.addEdge(maze[j][i], i, j, maze[j + 1][i-1], i-1, j + 1)
+                            self.addEdge(maze[j][i], j, i, maze[j + 1][i-1], j+1, i - 1)
                 i = i + 1
             j = j + 1

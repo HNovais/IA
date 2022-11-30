@@ -22,7 +22,7 @@ class Path:
         for line in maze:
             x = 0
             for char in line[:-1]:
-                xy = str((x, y))
+                xy = str((y, x))
                 if xy in coords:
                     print(colored(char, 'white', 'on_green', attrs=["bold"]), end='')
                 else:
