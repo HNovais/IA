@@ -3,8 +3,6 @@ from Nodo import Nodo
 from queue import Queue
 
 class Grafo:
-    
-    # Olá hugo
 
     def __init__(self, directed=False):
         self.lnodos = []
