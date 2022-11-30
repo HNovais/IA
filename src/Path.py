@@ -6,6 +6,7 @@ class Path:
         self.an = []
         self.mz = []
 
+    # Print ao circuito com cores no terminal
     def colorPath(self, answer, maze):
         nodes = answer[0]
         coords = []
