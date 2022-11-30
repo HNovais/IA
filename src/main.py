@@ -1,12 +1,15 @@
+import os
+
 from Grafo import Grafo
 from Path import Path
 
 def main():
     # Criar instância de grafo
     g = Grafo()
+    f = "track.txt"
 
     # Abrir ficheiro .txt com a pista
-    file = open(r"maze.txt","r")
+    file = open(f,"r")
     maze = file.readlines()
 
     # Adiciona as ligações entre nodos
@@ -17,10 +20,11 @@ def main():
     while saida != 0:
         print("1-Imprimir Grafo")
         print("2-Imprimir nodos de Grafo")
-        print("3-Imprimir Grafo")
-        print("4-DFS")
-        print("5-BFS")
-        print("6-Uniform")
+        print("3-Imprimir Circuito")
+        print("4-Alterar Circuito")
+        print("5-DFS")
+        print("6-BFS")
+        print("7-Uniform")
         print("0-Saír")
 
         saida = int(input("introduza a sua opcao-> "))
@@ -30,19 +34,30 @@ def main():
             # Escrever o grafo como string
             print(g.__str__())
             l = input("prima enter para continuar")
+            os.system("clear")
         elif saida == 2:
             # Imprimir as chaves do dicionario que representa o grafo
             for k in g.grafo.keys():
                 print(k.__str__())
             l = input("prima enter para continuar")
+            os.system("clear")
         elif saida == 3:
-            # Imprimir o grafo presente no ficheiro maze.txt
+            # Imprimir o grafo presente no ficheiro track.txt
             print("\n")
             for line in maze:
                 print(line, end='')
             print("\n")
             l = input("prima enter para continuar")
+            os.system("clear")
         elif saida == 4:
+            f=input("Novo ficheiro:")
+            file = open(f, "r")
+            g=Grafo()
+            maze = file.readlines()
+            g.addEdges(maze)
+            l = input("prima enter para continuar")
+            os.system("clear")
+        elif saida == 5:
             # Efetuar  pesquisa de caminho entre nodo inicial e final com DFS
             inicio = g.getStart(g.start)
             fim = g.end
@@ -51,7 +66,8 @@ def main():
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
-        elif saida == 5:
+            os.system("clear")
+        elif saida == 6:
             # Efetuar  pesquisa de caminho entre nodo inicial e final com BFS
             inicio = g.getStart(g.start)
             fim = g.end
@@ -60,7 +76,8 @@ def main():
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
-        elif saida == 6:
+            os.system("clear")
+        elif saida == 7:
             # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
             inicio = g.getStart(g.start)
             fim = g.end
@@ -69,9 +86,11 @@ def main():
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
+            os.system("clear")
         else:
             print("\33[31mOpção inválida...\033[m")
             l = input("prima enter para continuar")
+            os.system("clear")
 
     file.close()
 
