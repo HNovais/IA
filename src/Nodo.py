@@ -19,6 +19,12 @@ class Nodo:
     def getCord(self):
         return self.cord
 
+    def getX(self):
+        return self.cord[0]
+
+    def getY(self):
+        return self.cord[1]
+
     def setCord(self,x,y):
         self.cord = (x,y)
 

@@ -14,6 +14,7 @@ def main():
 
     # Adiciona as ligações entre nodos
     g.addEdges(maze)
+    g.setCarros()
 
     # GUI 
     saida = -1
@@ -55,6 +56,7 @@ def main():
             g=Grafo()
             maze = file.readlines()
             g.addEdges(maze)
+            g.setCarros()
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 5:
