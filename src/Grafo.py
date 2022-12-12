@@ -12,7 +12,7 @@ class Grafo:
         self.heuristicas = {}
         self.start = "P"
         self.end = "F"
-        self.carros = list()
+        self.carros = []
 
     def __str__(self):
         out = "\033[34mGrafo\033[m\n"
@@ -54,16 +54,14 @@ class Grafo:
 
     def getPrimCarro(self):
         return self.carros[0]
+
     def setCarros(self):
-        l = list()
-        i=0
+        i = 0
         for start in self.lnodos:
             if start.type == self.start:
-                i+=1
-                c=Carro(i,start.getX(),start.getY())
-                l.append(c)
-        self.carros=l
-
+                c = Carro(i,start)
+                self.carros.append(c)
+                i += 1
 
     # Retorna o custo do arco
     def getArcCost(self, node1, node2):

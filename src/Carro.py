@@ -1,7 +1,9 @@
+from Nodo import Nodo
+
 class Carro:
-    def __init__(self,id,x=-1,y=-1):
+    def __init__(self,id, node):
         self.id = id
-        self.coord = (x,y)
+        self.node = node
         self.velCol = 0
         self.velLine = 0
         self.accCol = 0
@@ -16,11 +18,11 @@ class Carro:
     def setId(self, id):
         self.id = id
     
-    def getCoord(self):
-        return self.coord
+    def getNode(self):
+        return self.node
 
-    def setCoord(self, coord):
-        self.coord = coord
+    def setNode(self, node):
+        self.node = node
 
     def getVelCol(self):
         return self.velCol
