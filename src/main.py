@@ -113,9 +113,10 @@ def main():
             inicio = g.getStart(g.start)
             fim = g.end
             path = Path()
-            answer = (g.AStar(inicio, fim))
-            print(answer)
-            path.colorPath(answer, maze)
+            for carro in g.carros:
+                answer = (g.AStar(carro.getNode(), fim))
+                print(answer)
+                path.colorPath(answer, maze)
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 10:
