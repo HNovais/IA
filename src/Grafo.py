@@ -90,15 +90,32 @@ class Grafo:
         if n1 in self.m_nodes:
             self.heuristicas[n] = heuristca
 
-    def calcula_heuristica(self, heuristica):
-        l = list(heuristica.keys())
-        min_estima = heuristica[l[0]]
-        node = l[0]
-        for k, v in heuristica.items():
-            if v < min_estima:
-                min_estima = v
-                node = k
-        return node
+    def manhattan_dist(self,c1, c2):
+        return math.fabs(c1[0] - c2[0]) + math.fabs(c1[1] - c2[1])
+
+    def get_end_coords_list(self):
+        end_nodes = []
+        for c in self.lnodos:
+            if (c.gettype() == "F"):
+                end_nodes.append(c.getCord())
+        return end_nodes
+
+    def calculate_heuristic(self):
+        end_coords_list = self.get_end_coords_list()
+        for node in self.lnodos:
+            node_c = node.getCord()
+            for end_c in end_coords_list:
+                dist = self.manhattan_dist(node_c, end_c)
+                if node not in self.heuristicas:
+                    self.heuristicas[node] = dist
+                elif self.heuristicas[node] > dist:
+                    self.heuristicas[node] = dist
+
+    def getNeighbours(self, nodo):
+        lista = []
+        for (adjacente, peso) in self.grafo[nodo]:
+            lista.append((adjacente, peso))
+        return lista
 
     def addEdges(self, maze):
         j = 0
@@ -121,17 +138,19 @@ class Grafo:
             j = j + 1
 
     # Algoritmo de procura DFS
-    def DFSSearch(self, start, end, path=[], visited=set()):
+    def DFSSearch(self, start, end, path=[],expansao=list(), visited=set()):
         path.append(start)
+        expansao.append(start)
         visited.add(start)
 
         if start.gettype() == end:
+            expansao.pop()
             custoT = self.calculateCost(path)
-            return (path, custoT)
+            return (expansao,(path, custoT))
         if start.gettype() != 'X':
             for (adjacente, peso) in self.grafo[start]:
                 if adjacente not in visited:
-                    resultado = self.DFSSearch(adjacente, end, path, visited)
+                    resultado = self.DFSSearch(adjacente, end, path, expansao,visited)
                     if resultado is not None:
                         return resultado
         path.pop()  
@@ -164,7 +183,6 @@ class Grafo:
                         if adjacent.gettype() == end:
                             endNode = adjacent
                             pathFound = True
-        print(expansao)
         path = []
         if pathFound == True:
             path.append(endNode)
@@ -173,7 +191,7 @@ class Grafo:
                 endNode = p[endNode]
             path.reverse()
             custoT = self.calculateCost(path)
-            return (path, custoT)
+            return (expansao,(path, custoT))
 
     def Uniform(self, start, end):
         q = list()
@@ -203,7 +221,6 @@ class Grafo:
                         if adjacent.gettype() == end:
                             endNode = adjacent
                             pathFound = True
-        print(expansao)
         path = []
         if pathFound == True:
             path.append(endNode)
@@ -212,42 +229,39 @@ class Grafo:
                 endNode = p[endNode]
             path.reverse()
             custoT = self.calculateCost(path)
-            return (path, custoT)
+            return (expansao,(path, custoT))
 
-
-    def greedy(self, start, end):
+    def greedy(self, start, end_name):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
         # closed_list é uma lista de nodos visitados
         # e todos os seus vizinhos também já o foram
-        open_list = set([start])
-        closed_list = set([])
-        expansao = list()
+        open_list = set()
+        closed_list = set()
+
+        open_list.add(start)
 
         # parents é um dicionário que mantém o antecessor de um nodo
         # começa com start
-        parents = {}
+        parents = dict()
         parents[start] = start
 
         while len(open_list) > 0:
             n = None
 
-            # encontraf nodo com a menor heuristica
+            # encontrado nodo com a menor heuristica
             for v in open_list:
-                if n == None or self.m_h[v] < self.m_h[n]:
+                if n is None or self.heuristicas[v] < self.heuristicas[n]:
                     n = v
 
-            expansao.append(n)
-
-            if n == None:
+            if n is None:
                 print('Path does not exist!')
                 return None
 
             # se o nodo corrente é o destino
             # reconstruir o caminho a partir desse nodo até ao start
             # seguindo o antecessor
-            if n == end:
-                expansao.pop()
+            if n.gettype() == end_name:
                 reconst_path = []
 
                 while parents[n] != n:
@@ -257,8 +271,8 @@ class Grafo:
                 reconst_path.append(start)
 
                 reconst_path.reverse()
-                print(expansao)
-                return (reconst_path, self.calcula_custo(reconst_path))
+
+                return (reconst_path, self.calculateCost(reconst_path))
 
             # para todos os vizinhos  do nodo corrente
             for (m, weight) in self.getNeighbours(n):
@@ -274,52 +288,80 @@ class Grafo:
             closed_list.add(n)
 
         print('Path does not exist!')
-        return (expansao)
+        return None
 
-    def procura_a(self, start, end):
-        q = []
-        q.append(start)
-        visitado = set()
-        visitado.add(start)
-        expansao = list()
-        p = {}
-        p[start] = None
-        custo = {}
-        custo[start] = 0
+    def AStar(self, start, end):
+        # open_list é uma lista de nodos visitados, mas com vizinhos
+        # que ainda não foram todos visitados, começa com o  start
+        # closed_list é uma lista de nodos visitados
+        # e todos os seus vizinhos também já o foram
+        open_list = set()
+        closed_list = set()
 
-        path_found = False
-        while len(q) > 0 and path_found == False:
-            eur = None
-            for elem in q:
-                if eur == None or self.m_h[elem] + custo[elem] < self.m_h[eur] + custo[eur]:
-                    eur = elem
-            expansao.append(eur)
-            q.remove(eur)
+        open_list.add(start)
 
-            if eur == end:
-                path_found = True
-            else:
-                for (adjacente, peso) in self.m_graph[eur]:
-                    if adjacente not in visitado:
-                        visitado.add(adjacente)
-                        custo[adjacente] = custo[eur] + self.get_arc_cost(eur, adjacente)
-                        q.append(adjacente)
-                        p[adjacente] = eur
-                    if adjacente == end:
-                        path_found = True
-        print(expansao)
-        path = []
-        if path_found == True:
-            path.append(end)
-            while p[end] is not None:
-                path.append(p[end])
-                end = p[end]
-            path.reverse()
-            custoT = self.calcula_custo(path)
-            return (path, custoT)
-        else:
-            print('Path does not exist!')
-            return None
+        # parents é um dicionário que mantém o antecessor de um nodo
+        # começa com start
+        parents = dict()
+        parents[start] = start
+
+        # cost é um dicionário que mantém o custo do caminho desde o ínicio do grafo até a um nodo
+        # começa com 0
+        cost = dict()
+        cost[start] = 0
+
+        while len(open_list) > 0:
+            n = None
+
+            # encontrar nodo com a menor heuristica
+            for v in open_list:
+                if n is None or self.heuristicas[v] + cost[v] < self.heuristicas[n] + cost[n]:
+                    n = v
+
+            if n is None:
+                print('Path does not exist!')
+                return None
+
+            # se o nodo corrente é o destino
+            # reconstruir o caminho a partir desse nodo até ao start
+            # seguindo o antecessor
+            if n.gettype() == end:
+                reconst_path = []
+
+                while parents[n] != n:
+                    reconst_path.append(n)
+                    n = parents[n]
+
+                reconst_path.append(start)
+
+                reconst_path.reverse()
+
+                return (reconst_path, self.calculateCost(reconst_path))
+
+            # para todos os vizinhos  do nodo corrente
+            if n.gettype() != "X":
+                for (m, weight) in self.getNeighbours(n):
+                    # Se o nodo corrente nao esta na open nem na closed list
+                    # adiciona-lo à open_list e marcar o antecessor
+                    if m not in open_list and m not in closed_list:
+                        open_list.add(m)
+                        parents[m] = n
+                        cost[m] = self.get_pathTotalCost(start, parents[m], parents)
+
+            # remover n da open_list e adiciona-lo à closed_list
+            # porque todos os seus vizinhos foram inspecionados
+            open_list.remove(n)
+            closed_list.add(n)
+
+        print('Path does not exist!')
+        return None
+
+    def get_pathTotalCost(self, start, n, parents):
+        cost = 0
+        while n != start:
+            cost += self.getArcCost(n, parents[n])
+            n = parents[n]
+        return cost
 
     def multiplayer (self):
         ncarros=len(self.carros)

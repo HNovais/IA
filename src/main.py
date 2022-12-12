@@ -14,6 +14,7 @@ def main():
 
     # Adiciona as ligações entre nodos
     g.addEdges(maze)
+    g.calculate_heuristic()
     g.setCarros()
 
     # GUI 
@@ -26,6 +27,8 @@ def main():
         print("5-DFS")
         print("6-BFS")
         print("7-Uniform")
+        print("8-Gulosa")
+        print("9-AStar")
         print("0-Saír")
 
         saida = int(input("introduza a sua opcao-> "))
@@ -64,9 +67,11 @@ def main():
             inicio = g.getStart(g.start)
             fim = g.end
             path = Path()
-            answer = (g.DFSSearch(inicio, fim, path=[], visited=set()))
-            print(answer)
-            path.colorPath(answer, maze)
+            answer = (g.DFSSearch(inicio, fim, path=[], expansao=list(),visited=set()))
+            print((answer[0],0))
+            path.colorPath((answer[0],0), maze)
+            print(answer[1])
+            path.colorPath(answer[1], maze)
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 6:
@@ -75,8 +80,10 @@ def main():
             fim = g.end
             path = Path()
             answer = (g.BFSSearch(inicio, fim))
-            print(answer)
-            path.colorPath(answer, maze)
+            print((answer[0],0))
+            path.colorPath((answer[0],0), maze)
+            print(answer[1])
+            path.colorPath(answer[1], maze)
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 7:
@@ -85,6 +92,28 @@ def main():
             fim = g.end
             path = Path()
             answer = (g.Uniform(inicio, fim))
+            print((answer[0],0))
+            path.colorPath((answer[0],0), maze)
+            print(answer[1])
+            path.colorPath(answer[1], maze)
+            l = input("prima enter para continuar")
+            os.system("clear")
+        elif saida == 8:
+            # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            inicio = g.getStart(g.start)
+            fim = g.end
+            path = Path()
+            answer = (g.greedy(inicio, fim))
+            print(answer)
+            path.colorPath(answer, maze)
+            l = input("prima enter para continuar")
+            os.system("clear")
+        elif saida == 9:
+            # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            inicio = g.getStart(g.start)
+            fim = g.end
+            path = Path()
+            answer = (g.AStar(inicio, fim))
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
