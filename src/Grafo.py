@@ -354,6 +354,52 @@ class Grafo:
         print('Path does not exist!')
         return None
 
+    def getSmallest(self, nodes):
+        for node in nodes:
+            if node.gettype() == "-":
+                return node
+
+        return nodes[0] 
+
+    def heuristicSearch(self, start, end):
+        # create a list of unexplored nodes, starting with the start node
+        unexplored = [start]
+        
+        # create a dictionary to track the parent of each node
+        parents = {start: None}
+        
+        # continue searching until we have explored all nodes
+        while len(unexplored) > 0:
+            # get the next node to explore (we will use a simple heuristic here
+            # that always selects the node with the smallest value)
+            next_node = self.getSmallest(unexplored)
+            
+            # if the next node is the end, we are done
+            if next_node.type == end:
+                break
+            
+            # otherwise, remove the next node from the unexplored list
+            unexplored.remove(next_node)
+            
+            # get a list of child nodes that can be reached from the next node
+            children = self.grafo[next_node]
+            
+            # add each child to the unexplored list and the parent dictionary
+            for child in children:
+                if child not in parents:
+                    unexplored.append(child)
+                    parents[child] = next_node
+  
+        # once we have explored all nodes, we can construct the path from start to end
+        path = []
+        node = self.getSmallest(unexplored)
+        while node is not None:
+            path.append(node)
+            node = parents[node]
+        
+        # return the path in reverse order (since we constructed it from end to start)
+        return path[::-1]
+
     def get_pathTotalCost(self, start, n, parents):
         cost = 0
         while n != start:

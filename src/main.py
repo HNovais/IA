@@ -118,6 +118,15 @@ def main():
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
             os.system("clear")
+        elif saida == 10:
+            inicio = g.getStart(g.start)
+            fim = g.end
+            path = Path()
+            answer = (g.heuristicSearch(inicio, fim))
+            print(answer)
+            path.colorPath(answer, maze)
+            l = input("prima enter para continuar")
+            os.system("clear")
         else:
             print("\33[31mOpção inválida...\033[m")
             l = input("prima enter para continuar")
