@@ -6,7 +6,7 @@ from Path import Path
 def main():
     # Criar instância de grafo
     g = Grafo()
-    f = "track.txt"
+    f = "pista.txt"
 
     # Abrir ficheiro .txt com a pista
     file = open(f,"r")
@@ -123,7 +123,7 @@ def main():
             inicio = g.getStart(g.start)
             fim = g.end
             path = Path()
-            answer = (g.heuristicSearch(inicio, fim))
+            answer = (g.multiplayer(inicio, fim))
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")

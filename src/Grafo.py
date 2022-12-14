@@ -120,7 +120,7 @@ class Grafo:
             if node.gettype() == "-":
                 return node
 
-        return nodes[0] 
+        return nodes[0]
 
     def addEdges(self, maze):
         j = 0
@@ -362,33 +362,6 @@ class Grafo:
         print('Path does not exist!')
         return None
 
-    def heuristicSearch(self, start, end):
-        unexplored = [start]      
-        parents = {start: None}
-        
-        while len(unexplored) > 0:
-            next_node = self.getSmallest(unexplored)
-            
-            if next_node.type == end:
-                break
-
-            unexplored.remove(next_node)
-            children = self.grafo[next_node]
-            
-            for (child, peso) in children:
-                if child not in parents:
-                    unexplored.append(child)
-                    parents[child] = next_node
-  
-        path = []
-        node = self.getSmallest(unexplored)
-        while node is not None:
-            path.append(node)
-            node = parents[node]
-
-
-        return (path[::-1], self.calculateCost(path[::-1]))
-
     def get_pathTotalCost(self, start, n, parents):
         cost = 0
         while n != start:
@@ -396,9 +369,89 @@ class Grafo:
             n = parents[n]
         return cost
 
-    def multiplayer (self):
-        ncarros=len(self.carros)
+    def heuristic(self, pos, vel, acc, end):
+        p1 = pos[0] + vel[0] + acc[0]
+        p2 = pos[1] + vel[1] + acc[1]
 
-        return None
+        newPos = (p1, p2)
+
+        v1 = vel[0] + acc[0]
+        v2 = vel[1] + acc[1]
+
+        newVel = (v1, v2)
+
+        sqrDist = (newPos[0] - end[0]) ** 2 + (newPos[1] - end[1]) ** 2
+        dist = math.sqrt(sqrDist)
+
+        totVel = math.sqrt(newVel[0] ** 2 + newVel[1] ** 2)
+
+        if (totVel == 0):
+            time = dist
+
+        else:
+            time = dist / totVel
+
+        return time
+
+    def heuristicaTempo(self,vel,acc):
+        end_coords_list = self.get_end_coords_list()
+        for node in self.lnodos:
+            node_c = node.getCord()
+            for end_c in end_coords_list:
+                time = self.heuristic(node_c,vel,acc,end_c)
+                if node not in self.heuristicas:
+                    self.heuristicas[node] = time
+                elif self.heuristicas[node] > time:
+                    self.heuristicas[node] = time
+    def getValues(self, start, last):
+        s = start.getCord()
+        l = last.getCord()
+
+        acc = (0, 0)
+
+        if (l[0] > s[0]):
+            if (l[1] > s[1]):
+                acc = (1, 1)
+            elif (l[1] == s[1]):
+                acc = (1, 0)
+            else:
+                acc = (1, -1)
+        elif (l[0] == s[0]):
+            if (l[1] > s[1]):
+                acc = (0, 1)
+            elif (l[1] == s[1]):
+                acc = (0, 0)
+            else:
+                acc = (0, -1)
+        else:
+            if (l[1] > s[1]):
+                acc = (-1, 1)
+            elif (l[1] == s[1]):
+                acc = (-1, 0)
+            else:
+                acc = (-1, -1)
+
+        return acc
+
+    def multiplayer (self, start, end):
+        vel = (0, 0)
+        acc = (0, 0)
+
+        pos = start
+        path = []
+        endcords=self.get_end_coords_list()
+
+
+        while pos.getCord() not in endcords:
+            self.heuristicaTempo(vel,acc)
+            answer=self.AStar(pos,end)
+            auxpath=answer[0]
+            proxpos = auxpath[1]
+            acc=self.getValues(pos,proxpos)
+            vel = (vel[0] + acc[0], vel[1] + acc[1])
+            path.append(proxpos)
+            pos=proxpos
+
+        return path,self.calculateCost(path)
 
 
