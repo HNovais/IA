@@ -1,13 +1,16 @@
 from Nodo import Nodo
 
 class Carro:
-    def __init__(self,id, node):
+    def __init__(self,id, node, name = ""):
         self.id = id
         self.node = node
         self.velCol = 0
         self.velLine = 0
         self.accCol = 0
         self.accLine = 0
+        self.vel = (0, 0)
+        self.acc = (0, 0)
+        self.name = name
 
     def __str__(self):
         return self.id + " " + self.coord + ": Velocity (" + self.velCol + "," + self.velLine + "); Acceleration (" + self.accCol + "," + self.accCol + ")" 
@@ -47,4 +50,24 @@ class Carro:
 
     def setAccLine(self, accLine):
         self.accLine = accLine
+
+    def getVel(self):
+        return self.vel
+    
+    def setVel(self, velCol, velLine):
+        self.vel = (velCol, velLine)
+
+    def getAcc(self):
+        return self.acc
+
+    def setAcc(self, accCol, accLine):
+        self.acc = (accCol, accLine)
+
+    def getName(self):
+        return self.name
+    
+    def setName(self, name):
+        self.name = name
+
+    
     

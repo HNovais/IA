@@ -121,11 +121,17 @@ def main():
             os.system("clear")
         elif saida == 10:
             inicio = g.getStart(g.start)
+            inicio2 = g.getStart(g.start2)
             fim = g.end
             path = Path()
-            answer = (g.multiplayer(inicio, fim))
-            print(answer)
-            path.colorPath(answer, maze)
+            answer = (g.multiplayer(inicio, inicio2, fim))
+            
+            #print(answer[0][0])
+            #print(answer[0][1])
+
+            path.colorRace(answer[0][0], answer[0][1], maze)
+            print("O Vencedor da corrida é " + answer[2])
+        
             l = input("prima enter para continuar")
             os.system("clear")
         else:

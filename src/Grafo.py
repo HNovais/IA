@@ -11,6 +11,7 @@ class Grafo:
         self.grafo = {}
         self.heuristicas = {}
         self.start = "P"
+        self.start2 = "2"
         self.end = "F"
         self.carros = []
 
@@ -393,6 +394,7 @@ class Grafo:
 
         return time
 
+
     def heuristicaTempo(self,vel,acc):
         end_coords_list = self.get_end_coords_list()
         for node in self.lnodos:
@@ -433,25 +435,90 @@ class Grafo:
 
         return acc
 
-    def multiplayer (self, start, end):
-        vel = (0, 0)
-        acc = (0, 0)
+    def multiplayer (self, start, start2, end):
+        print("criacarro")
+        carro1 = Carro(1, start, "Hamilton")
+        carro2 = Carro(2, start2, "Vettel")
 
-        pos = start
-        path = []
+        pos1 = start
+        pos2 = start2
+
+        path1 = [start]
+        path2 = [start2]
+
+        flag1 = 0
+        flag2 = 0
+        win = ""
         endcords=self.get_end_coords_list()
 
+        while flag1 or flag2 != 1:
+            if pos1.getCord() and pos2.getCord() not in endcords:
+                self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
+                answer1=self.AStar(pos1,end)
+                
+                self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
+                answer2 = self.BFSSearch(pos2, end)
 
-        while pos.getCord() not in endcords:
-            self.heuristicaTempo(vel,acc)
-            answer=self.AStar(pos,end)
-            auxpath=answer[0]
-            proxpos = auxpath[1]
-            acc=self.getValues(pos,proxpos)
-            vel = (vel[0] + acc[0], vel[1] + acc[1])
-            path.append(proxpos)
-            pos=proxpos
+                # Astar retorna um tuplo com o caminho e o custo respetivo
+                # Pegamos no caminho só fazendo answer[0]
+                auxpath1 = answer1[0]
+                auxpath2 = answer2[1][0]
+                # Depois pegamos no auxpath[1] que será a próxima posição, sendo auxpath[0] a posição atual
+                proxpos1 = auxpath1[1]
+                proxpos2 = auxpath2[1]
 
-        return path,self.calculateCost(path)
+                acc1 = self.getValues(pos1, proxpos1)
+                carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
+                acc2 = self.getValues(pos2, proxpos2)
+                carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
+                
+                if proxpos1 == proxpos2:
+                    if carro1.getVel() > carro2.getVel():
+                        proxpos2 = pos2
+                        carro2.setVel(0,0)
+                    else:
+                        proxpos1 = pos1
+                        carro1.setVel(0,0)
 
 
+                path1.append(proxpos1)
+                path2.append(proxpos2)
+
+                pos1 = proxpos1
+                pos2 = proxpos2
+
+            elif pos1.getCord() in endcords:
+                flag1 = 1
+                win = carro1.name
+            
+                self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
+                answer2 = self.AStar(pos2, end)
+                if len(answer2[0]) >1:
+                    proxpos2 = answer2[0][1]
+                
+                    aux1 = self.getValues(pos2, proxpos2)
+                    carro2.setAcc(aux1[0], aux1[1])
+                    carro2.setVel(carro2.getVelCol() + carro2.getAccCOl(), carro2.getVelLine() + carro2.getAccLine())
+
+                    path2.append(proxpos2)
+                    pos2 = proxpos2
+                else: flag2 = 1
+        
+            else: 
+                flag2 = 1
+                win = carro2.name
+
+                if len(answer1[0]) >1:
+                    self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
+                    answer1=self.AStar(pos1,end)
+                    proxpos1 = answer1[0][1]
+
+                    aux2 = self.getValues(pos1, proxpos1)
+                    carro1.setAcc(aux2[0], aux2[1])
+                    carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
+
+                    path1.append(proxpos1)
+                    pos1 = proxpos1
+                else: flag1 = 1
+
+        return ((path1, path2) ,(self.calculateCost(path1), self.calculateCost(path2)), win) 
