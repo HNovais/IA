@@ -1,7 +1,9 @@
 import math
+import time
 from Nodo import Nodo
 from queue import Queue
 from Carro import Carro
+from Path import Path
 
 class Grafo:
 
@@ -346,14 +348,14 @@ class Grafo:
                 return (reconst_path, self.calculateCost(reconst_path))
 
             # para todos os vizinhos  do nodo corrente
-            if n.gettype() != "X":
-                for (m, weight) in self.getNeighbours(n):
+            #if n.gettype() != "X":
+            for (m, weight) in self.getNeighbours(n):
                     # Se o nodo corrente nao esta na open nem na closed list
                     # adiciona-lo à open_list e marcar o antecessor
-                    if m not in open_list and m not in closed_list:
-                        open_list.add(m)
-                        parents[m] = n
-                        cost[m] = self.get_pathTotalCost(start, parents[m], parents)
+                if m not in open_list and m not in closed_list:
+                    open_list.add(m)
+                    parents[m] = n
+                    cost[m] = self.get_pathTotalCost(start, parents[m], parents)
 
             # remover n da open_list e adiciona-lo à closed_list
             # porque todos os seus vizinhos foram inspecionados
@@ -435,7 +437,7 @@ class Grafo:
 
         return acc
 
-    def multiplayer (self, start, start2, end):
+    def multiplayer (self, start, start2, end, maze):
         print("criacarro")
         carro1 = Carro(1, start, "Hamilton")
         carro2 = Carro(2, start2, "Vettel")
@@ -450,6 +452,8 @@ class Grafo:
         flag2 = 0
         win = ""
         endcords=self.get_end_coords_list()
+
+        path = Path()
 
         while flag1 or flag2 != 1:
             if pos1.getCord() and pos2.getCord() not in endcords:
@@ -519,6 +523,10 @@ class Grafo:
 
                     path1.append(proxpos1)
                     pos1 = proxpos1
+
                 else: flag1 = 1
 
+            path.colorRace(path1, path2, maze)
+            time.sleep(0.3)
+            
         return ((path1, path2) ,(self.calculateCost(path1), self.calculateCost(path2)), win) 

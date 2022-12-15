@@ -124,7 +124,7 @@ def main():
             inicio2 = g.getStart(g.start2)
             fim = g.end
             path = Path()
-            answer = (g.multiplayer(inicio, inicio2, fim))
+            answer = (g.multiplayer(inicio, inicio2, fim, maze))
             
             #print(answer[0][0])
             #print(answer[0][1])
