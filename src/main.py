@@ -27,8 +27,10 @@ def main():
         print("5-DFS")
         print("6-BFS")
         print("7-Uniform")
-        print("8-Gulosa")
-        print("9-AStar")
+        print("8-Dijkstra")
+        print("9-Gulosa")
+        print("10-AStar")
+        print("11-Multijogador")
         print("0-Saír")
 
         saida = int(input("introduza a sua opcao-> "))
@@ -103,12 +105,24 @@ def main():
             inicio = g.getStart(g.start)
             fim = g.end
             path = Path()
+            answer = (g.dijkstra_algorithm(inicio, fim))
+            print((answer[0],0))
+            path.colorPath((answer[0],0), maze)
+            print(answer[1])
+            path.colorPath(answer[1], maze)
+            l = input("prima enter para continuar")
+            os.system("clear")
+        elif saida == 9:
+            # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            inicio = g.getStart(g.start)
+            fim = g.end
+            path = Path()
             answer = (g.greedy(inicio, fim))
             print(answer)
             path.colorPath(answer, maze)
             l = input("prima enter para continuar")
             os.system("clear")
-        elif saida == 9:
+        elif saida == 10:
             # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
             inicio = g.getStart(g.start)
             fim = g.end
@@ -119,12 +133,15 @@ def main():
                 path.colorPath(answer, maze)
             l = input("prima enter para continuar")
             os.system("clear")
-        elif saida == 10:
+        elif saida == 11:
             inicio = g.getStart(g.start)
             inicio2 = g.getStart(g.start2)
             fim = g.end
             path = Path()
-            answer = (g.multiplayer(inicio, inicio2, fim, maze))
+            print("\n(Escolha segundo os valores acima)")
+            a1 = int(input("Algoritmo para o primeiro carro: "))
+            a2 = int(input("Algoritmo para o primeiro carro: "))
+            answer = (g.multiplayer(inicio, inicio2, fim, maze,a1,a2))
             
             #print(answer[0][0])
             #print(answer[0][1])

@@ -1,7 +1,8 @@
 import math
+import os
 import time
 from Nodo import Nodo
-from queue import Queue
+from queue import Queue, PriorityQueue
 from Carro import Carro
 from Path import Path
 
@@ -239,6 +240,45 @@ class Grafo:
             custoT = self.calculateCost(path)
             return (expansao,(path, custoT))
 
+    def dijkstra_algorithm(self, start, end):
+        q = list()
+        q.append((start, 0))
+
+        visited = list()
+        visited.append(start)
+        expansao = list()
+        p = {}
+        p[start] = None
+
+        pathFound = False
+        while len(q) > 0:
+            q.sort(key=lambda x: x[1])
+            n = q.pop(0)
+            expansao.append(n[0])
+            if n[0].gettype() == end:
+                expansao.pop()
+                pathFound = True
+            else:
+                if n[0].gettype() != 'X':
+                    for (adjacent, cost) in self.grafo[n[0]]:
+                        if adjacent not in visited:
+                            visited.append(adjacent)
+                            q.append((adjacent, n[1] + self.getArcCost(n[0], adjacent)))
+                            p[adjacent] = n[0]
+                        if adjacent.gettype() == end:
+                            endNode = adjacent
+                            pathFound = True
+        path = []
+        if pathFound == True:
+            path.append(endNode)
+            while p[endNode] is not None:
+                path.append(p[endNode])
+                endNode = p[endNode]
+            path.reverse()
+            custoT = self.calculateCost(path)
+            return (expansao, (path, custoT))
+
+
     def greedy(self, start, end_name):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
@@ -355,7 +395,7 @@ class Grafo:
                 if m not in open_list and m not in closed_list:
                     open_list.add(m)
                     parents[m] = n
-                    cost[m] = self.get_pathTotalCost(start, parents[m], parents)
+                    cost[m] = self.get_pathTotalCost(start, m, parents)
 
             # remover n da open_list e adiciona-lo à closed_list
             # porque todos os seus vizinhos foram inspecionados
@@ -407,6 +447,7 @@ class Grafo:
                     self.heuristicas[node] = time
                 elif self.heuristicas[node] > time:
                     self.heuristicas[node] = time
+
     def getValues(self, start, last):
         s = start.getCord()
         l = last.getCord()
@@ -437,7 +478,8 @@ class Grafo:
 
         return acc
 
-    def multiplayer (self, start, start2, end, maze):
+
+    def multiplayer (self, start, start2, end, maze,a1,a2):
         print("criacarro")
         carro1 = Carro(1, start, "Hamilton")
         carro2 = Carro(2, start2, "Vettel")
@@ -447,6 +489,8 @@ class Grafo:
 
         path1 = [start]
         path2 = [start2]
+        auxpath1 = list()
+        auxpath2 = list()
 
         flag1 = 0
         flag2 = 0
@@ -457,16 +501,53 @@ class Grafo:
 
         while flag1 or flag2 != 1:
             if pos1.getCord() and pos2.getCord() not in endcords:
-                self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
-                answer1=self.AStar(pos1,end)
-                
-                self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
-                answer2 = self.BFSSearch(pos2, end)
+                if a1 == 5:
+                    answer1 = self.DFSSearch(pos1, end, path=[],expansao=list(),visited=set())
+                    auxpath1 = answer1[1][0]
+                elif a1 == 6:
+                    answer1 = self.BFSSearch(pos1, end)
+                    auxpath1 = answer1[1][0]
+                elif a1 == 7:
+                    answer1 = self.Uniform(pos1, end)
+                    auxpath1 = answer1[1][0]
+                elif a1 == 8:
+                    answer1 = self.dijkstra_algorithm(pos1, end)
+                    auxpath1 = answer1[1][0]
+                elif a1 == 9:
+                    self.heuristicaTempo(carro1.getVel(), carro1.getAcc())
+                    answer1 = self.greedy(pos1, end)
+                    auxpath1 = answer1[0]
+                elif a1 == 10:
+                    self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
+                    answer1=self.AStar(pos1,end)
+                    auxpath1 = answer1[0]
+
+                if a2 == 5:
+                    answer2 = self.DFSSearch(pos2, end, path=[],expansao=list(),visited=set())
+                    auxpath2 = answer2[1][0]
+                elif a2 == 6:
+                    answer2 = self.BFSSearch(pos2, end)
+                    auxpath2 = answer2[1][0]
+                elif a2 == 7:
+                    answer2 = self.Uniform(pos2, end)
+                    auxpath2 = answer2[1][0]
+                elif a2 == 8:
+                    answer2 = self.dijkstra_algorithm(pos2, end)
+                    auxpath2 = answer2[1][0]
+                elif a2 == 9:
+                    self.heuristicaTempo(carro2.getVel(), carro2.getAcc())
+                    answer2 = self.greedy(pos2, end)
+                    auxpath2 = answer2[0]
+                elif a2 == 10:
+                    self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
+                    answer2=self.AStar(pos2,end)
+                    auxpath2 = answer2[0]
+
 
                 # Astar retorna um tuplo com o caminho e o custo respetivo
                 # Pegamos no caminho só fazendo answer[0]
-                auxpath1 = answer1[0]
-                auxpath2 = answer2[1][0]
+                #auxpath1 = answer1[0]
+                #auxpath2 = answer2[1][0]
                 # Depois pegamos no auxpath[1] que será a próxima posição, sendo auxpath[0] a posição atual
                 proxpos1 = auxpath1[1]
                 proxpos2 = auxpath2[1]
@@ -526,7 +607,11 @@ class Grafo:
 
                 else: flag1 = 1
 
+            os.system("clear")
             path.colorRace(path1, path2, maze)
             time.sleep(0.3)
-            
+
+        print(answer1)
+        print(answer2)
+        path.colorRace(path1, path2, maze)
         return ((path1, path2) ,(self.calculateCost(path1), self.calculateCost(path2)), win) 

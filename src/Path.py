@@ -9,8 +9,8 @@ class Path:
     # Print ao circuito com cores no terminal
     def colorPath(self, answer, maze):
         coords = []
-
-        for node in answer:
+        nodes = answer[0]
+        for node in nodes:
             n = str(node)
             coord = n.split(':')
             coords.append(str(coord[1]))
@@ -52,8 +52,6 @@ class Path:
         y = 0
 
         print()
-        print(answer1)
-        print(answer2)
 
         coords = [value for value in coords1 if value in coords2]
 
