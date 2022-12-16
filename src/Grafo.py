@@ -70,7 +70,9 @@ class Grafo:
     # Retorna o custo do arco
     def getArcCost(self, node1, node2):
         custoT = math.inf
-        a = self.grafo[node1]   
+        a = self.grafo[node1]
+        if node1==node2:
+            return 0
         for (node, cost) in a:
             if node == node2:
                 custoT = cost
@@ -570,9 +572,11 @@ class Grafo:
                 if proxpos1 == proxpos2:
                     if carro1.getVel() > carro2.getVel():
                         proxpos2 = pos2
+                        carro2.setAcc(0,0)
                         carro2.setVel(0,0)
                     else:
                         proxpos1 = pos1
+                        carro1.setAcc(0,0)
                         carro1.setVel(0,0)
 
 
@@ -598,8 +602,8 @@ class Grafo:
                     path2.append(proxpos2)
                     pos2 = proxpos2
                 else: flag2 = 1
-        
-            else: 
+
+            elif pos2.getCord() in endcords:
                 flag2 = 1
                 win = carro2.name
 
@@ -621,4 +625,4 @@ class Grafo:
             path.colorRace(path1, path2, maze)
             time.sleep(0.3)
         os.system("clear")
-        return ((path1, path2) ,(self.calculateCost(path1), self.calculateCost(path2)), win) 
+        return ((path1, path2) ,(self.calculateCost(path1),self.calculateCost(path2)), win)
