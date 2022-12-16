@@ -143,8 +143,8 @@ def main():
             a2 = int(input("Algoritmo para o primeiro carro: "))
             answer = (g.multiplayer(inicio, inicio2, fim, maze,a1,a2))
             
-            #print(answer[0][0])
-            #print(answer[0][1])
+            print(answer[0][0])
+            print(answer[0][1])
 
             path.colorRace(answer[0][0], answer[0][1], maze)
             print("O Vencedor da corrida é " + answer[2])

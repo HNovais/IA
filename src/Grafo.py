@@ -517,10 +517,14 @@ class Grafo:
                     self.heuristicaTempo(carro1.getVel(), carro1.getAcc())
                     answer1 = self.greedy(pos1, end)
                     auxpath1 = answer1[0]
+                    #acc1 = self.getValues(pos1, proxpos1)
+                    #carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
                 elif a1 == 10:
                     self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
                     answer1=self.AStar(pos1,end)
                     auxpath1 = answer1[0]
+                    #acc1 = self.getValues(pos1, proxpos1)
+                    #carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
 
                 if a2 == 5:
                     answer2 = self.DFSSearch(pos2, end, path=[],expansao=list(),visited=set())
@@ -538,10 +542,14 @@ class Grafo:
                     self.heuristicaTempo(carro2.getVel(), carro2.getAcc())
                     answer2 = self.greedy(pos2, end)
                     auxpath2 = answer2[0]
+                    #acc2 = self.getValues(pos2, proxpos2)
+                    #carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
                 elif a2 == 10:
                     self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
                     answer2=self.AStar(pos2,end)
                     auxpath2 = answer2[0]
+                    #acc2 = self.getValues(pos2, proxpos2)
+                    #carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
 
 
                 # Astar retorna um tuplo com o caminho e o custo respetivo
@@ -553,8 +561,10 @@ class Grafo:
                 proxpos2 = auxpath2[1]
 
                 acc1 = self.getValues(pos1, proxpos1)
+                carro1.setAcc(acc1[0], acc1[1])
                 carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
                 acc2 = self.getValues(pos2, proxpos2)
+                carro2.setAcc(acc2[0],acc2[1])
                 carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
                 
                 if proxpos1 == proxpos2:
@@ -610,8 +620,5 @@ class Grafo:
             os.system("clear")
             path.colorRace(path1, path2, maze)
             time.sleep(0.3)
-
-        print(answer1)
-        print(answer2)
-        path.colorRace(path1, path2, maze)
+        os.system("clear")
         return ((path1, path2) ,(self.calculateCost(path1), self.calculateCost(path2)), win) 
