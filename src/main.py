@@ -2,6 +2,7 @@ import os
 
 from Grafo import Grafo
 from Path import Path
+import Gerador
 
 def main():
     # Criar instância de grafo
@@ -151,6 +152,9 @@ def main():
         
             l = input("prima enter para continuar")
             os.system("clear")
+        elif saida == 12:
+            gerarfile = input("Nome do ficheiro: ")
+            Gerador.gerarMapa(gerarfile)
         else:
             print("\33[31mOpção inválida...\033[m")
             l = input("prima enter para continuar")
