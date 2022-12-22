@@ -281,7 +281,7 @@ class Grafo:
             return (expansao, (path, custoT))
 
 
-    def greedy(self, start, end_name):
+    def greedy(self, start, end_name,vel=(0,0),acc=(0,0)):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
         # closed_list é uma lista de nodos visitados
@@ -290,20 +290,23 @@ class Grafo:
         closed_list = set()
 
         open_list.add(start)
-
+        expansao = list()
         # parents é um dicionário que mantém o antecessor de um nodo
         # começa com start
         parents = dict()
         parents[start] = start
 
+        end_coords_list = self.get_end_coords_list()
+        nant = start
         while len(open_list) > 0:
             n = None
 
             # encontrado nodo com a menor heuristica
             for v in open_list:
-                if n is None or self.heuristicas[v] < self.heuristicas[n]:
-                    n = v
-
+                for end_c in end_coords_list:
+                    if n is None or self.heuristic(v.getCord(),vel,acc,end_c) < self.heuristic(n.getCord(),vel,acc,end_c) :
+                        n = v
+            expansao.append(n)
             if n is None:
                 print('Path does not exist!')
                 return None
@@ -322,8 +325,12 @@ class Grafo:
 
                 reconst_path.reverse()
 
-                return (reconst_path, self.calculateCost(reconst_path))
+                return (expansao,(reconst_path, self.calculateCost(reconst_path)))
 
+            if n is not start:
+                acc = self.getValues(nant.getCord(), n.getCord())
+                vel = (vel[0]+acc[0], vel[1]+ acc[1])
+                nant=n
             if n.gettype() != "X":
                 # para todos os vizinhos  do nodo corrente
                 for (m, weight) in self.getNeighbours(n):
@@ -341,7 +348,7 @@ class Grafo:
         print('Path does not exist!')
         return None
 
-    def AStar(self, start, end):
+    def AStar(self, start, end,vel=(0,0),acc=(0,0)):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
         # closed_list é uma lista de nodos visitados
@@ -350,7 +357,7 @@ class Grafo:
         closed_list = set()
 
         open_list.add(start)
-
+        expansao = list()
         # parents é um dicionário que mantém o antecessor de um nodo
         # começa com start
         parents = dict()
@@ -361,14 +368,16 @@ class Grafo:
         cost = dict()
         cost[start] = 0
 
+        end_coords_list = self.get_end_coords_list()
+        nant = start
         while len(open_list) > 0:
             n = None
-
             # encontrar nodo com a menor heuristica
             for v in open_list:
-                if n is None or self.heuristicas[v] + cost[v] < self.heuristicas[n] + cost[n]:
-                    n = v
-
+                for end_c in end_coords_list:
+                    if n is None or self.heuristic(v.getCord(),vel,acc,end_c) + cost[v] < self.heuristic(n.getCord(),vel,acc,end_c) + cost[n]:
+                        n = v
+            expansao.append(n)
             if n is None:
                 print('Path does not exist!')
                 return None
@@ -376,6 +385,7 @@ class Grafo:
             # se o nodo corrente é o destino
             # reconstruir o caminho a partir desse nodo até ao start
             # seguindo o antecessor
+
             if n.gettype() == end:
                 reconst_path = []
 
@@ -387,10 +397,13 @@ class Grafo:
 
                 reconst_path.reverse()
 
-                return (reconst_path, self.calculateCost(reconst_path))
+                return (expansao,(reconst_path, self.calculateCost(reconst_path)))
 
             # para todos os vizinhos  do nodo corrente
-            #if n.gettype() != "X":
+            if n is not start:
+                acc = self.getValues(nant.getCord(), n.getCord())
+                vel = (vel[0]+acc[0], vel[1]+ acc[1])
+                nant=n
             for (m, weight) in self.getNeighbours(n):
                     # Se o nodo corrente nao esta na open nem na closed list
                     # adiciona-lo à open_list e marcar o antecessor
@@ -451,8 +464,8 @@ class Grafo:
                     self.heuristicas[node] = time
 
     def getValues(self, start, last):
-        s = start.getCord()
-        l = last.getCord()
+        s = start
+        l = last
 
         acc = (0, 0)
 
@@ -480,149 +493,73 @@ class Grafo:
 
         return acc
 
+    def escolhaAlgoritmo(self,pos,end,a):
+        auxpath = list()
+        if a == 6:
+            answer1 = self.DFSSearch(pos, end, path=[],expansao=list(),visited=set())
+            auxpath = answer1[1][0]
+        elif a == 7:
+            answer1 = self.BFSSearch(pos, end)
+            auxpath = answer1[1][0]
+        elif a == 8:
+            answer1 = self.Uniform(pos, end)
+            auxpath = answer1[1][0]
+        elif a == 9:
+            answer1 = self.dijkstra_algorithm(pos, end)
+            auxpath = answer1[1][0]
+        elif a == 10:
+            answer1 = self.greedy(pos, end)
+            auxpath = answer1[1][0]
+        elif a == 11:
+            answer1=self.AStar(pos,end)
+            auxpath = answer1[1][0]
+        return  auxpath
 
-    def multiplayer (self, start, start2, end, maze,a1,a2):
-        print("criacarro")
-        carro1 = Carro(1, start, "Hamilton")
-        carro2 = Carro(2, start2, "Vettel")
-
+    def multiplayer (self, start, start2, end, maze,a1,a2,n1,n2):
         pos1 = start
         pos2 = start2
 
-        path1 = [start]
-        path2 = [start2]
-        auxpath1 = list()
-        auxpath2 = list()
-
+        path1 = list()
+        path2 = list()
         flag1 = 0
         flag2 = 0
+
         win = ""
-        endcords=self.get_end_coords_list()
 
         path = Path()
 
-        while flag1 or flag2 != 1:
-            if pos1.getCord() and pos2.getCord() not in endcords:
-                if a1 == 5:
-                    answer1 = self.DFSSearch(pos1, end, path=[],expansao=list(),visited=set())
-                    auxpath1 = answer1[1][0]
-                elif a1 == 6:
-                    answer1 = self.BFSSearch(pos1, end)
-                    auxpath1 = answer1[1][0]
-                elif a1 == 7:
-                    answer1 = self.Uniform(pos1, end)
-                    auxpath1 = answer1[1][0]
-                elif a1 == 8:
-                    answer1 = self.dijkstra_algorithm(pos1, end)
-                    auxpath1 = answer1[1][0]
-                elif a1 == 9:
-                    self.heuristicaTempo(carro1.getVel(), carro1.getAcc())
-                    answer1 = self.greedy(pos1, end)
-                    auxpath1 = answer1[0]
-                    #acc1 = self.getValues(pos1, proxpos1)
-                    #carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
-                elif a1 == 10:
-                    self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
-                    answer1=self.AStar(pos1,end)
-                    auxpath1 = answer1[0]
-                    #acc1 = self.getValues(pos1, proxpos1)
-                    #carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
+        auxpath1 = self.escolhaAlgoritmo(pos1,end,a1)
+        auxpath2 = self.escolhaAlgoritmo(pos2, end, a2)
 
-                if a2 == 5:
-                    answer2 = self.DFSSearch(pos2, end, path=[],expansao=list(),visited=set())
-                    auxpath2 = answer2[1][0]
-                elif a2 == 6:
-                    answer2 = self.BFSSearch(pos2, end)
-                    auxpath2 = answer2[1][0]
-                elif a2 == 7:
-                    answer2 = self.Uniform(pos2, end)
-                    auxpath2 = answer2[1][0]
-                elif a2 == 8:
-                    answer2 = self.dijkstra_algorithm(pos2, end)
-                    auxpath2 = answer2[1][0]
-                elif a2 == 9:
-                    self.heuristicaTempo(carro2.getVel(), carro2.getAcc())
-                    answer2 = self.greedy(pos2, end)
-                    auxpath2 = answer2[0]
-                    #acc2 = self.getValues(pos2, proxpos2)
-                    #carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
-                elif a2 == 10:
-                    self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
-                    answer2=self.AStar(pos2,end)
-                    auxpath2 = answer2[0]
-                    #acc2 = self.getValues(pos2, proxpos2)
-                    #carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
+        end_coords_list = self.get_end_coords_list()
+
+        repetidos = set()
 
 
-                # Astar retorna um tuplo com o caminho e o custo respetivo
-                # Pegamos no caminho só fazendo answer[0]
-                #auxpath1 = answer1[0]
-                #auxpath2 = answer2[1][0]
-                # Depois pegamos no auxpath[1] que será a próxima posição, sendo auxpath[0] a posição atual
-                proxpos1 = auxpath1[1]
-                proxpos2 = auxpath2[1]
+        for i in range(max(len(auxpath1),len(auxpath2))):
+            if flag1 == 0 and flag2 == 0:
+                if auxpath1[i] == auxpath2[i]:
+                    repetidos.add(auxpath1[i])
 
-                acc1 = self.getValues(pos1, proxpos1)
-                carro1.setAcc(acc1[0], acc1[1])
-                carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
-                acc2 = self.getValues(pos2, proxpos2)
-                carro2.setAcc(acc2[0],acc2[1])
-                carro2.setVel(carro2.getVelCol() + carro2.getAccCol(), carro2.getVelLine() + carro2.getAccLine())
-                
-                if proxpos1 == proxpos2:
-                    if carro1.getVel() > carro2.getVel():
-                        proxpos2 = pos2
-                        carro2.setAcc(0,0)
-                        carro2.setVel(0,0)
-                    else:
-                        proxpos1 = pos1
-                        carro1.setAcc(0,0)
-                        carro1.setVel(0,0)
-
-
-                path1.append(proxpos1)
-                path2.append(proxpos2)
-
-                pos1 = proxpos1
-                pos2 = proxpos2
-
-            elif pos1.getCord() in endcords:
-                flag1 = 1
-                win = carro1.name
-            
-                self.heuristicaTempo(carro2.getVel(),carro2.getAcc())
-                answer2 = self.AStar(pos2, end)
-                if len(answer2[0]) >1:
-                    proxpos2 = answer2[0][1]
-                
-                    aux1 = self.getValues(pos2, proxpos2)
-                    carro2.setAcc(aux1[0], aux1[1])
-                    carro2.setVel(carro2.getVelCol() + carro2.getAccCOl(), carro2.getVelLine() + carro2.getAccLine())
-
-                    path2.append(proxpos2)
-                    pos2 = proxpos2
-                else: flag2 = 1
-
-            elif pos2.getCord() in endcords:
-                flag2 = 1
-                win = carro2.name
-
-                if len(answer1[0]) >1:
-                    self.heuristicaTempo(carro1.getVel(),carro1.getAcc())
-                    answer1=self.AStar(pos1,end)
-                    proxpos1 = answer1[0][1]
-
-                    aux2 = self.getValues(pos1, proxpos1)
-                    carro1.setAcc(aux2[0], aux2[1])
-                    carro1.setVel(carro1.getVelCol() + carro1.getAccCol(), carro1.getVelLine() + carro1.getAccLine())
-
-                    path1.append(proxpos1)
-                    pos1 = proxpos1
-
-                else: flag1 = 1
-
+                    auxpath1[i]=auxpath1[i-1]
+                    del auxpath1[i:]
+                    new=self.escolhaAlgoritmo(auxpath1[i-1],end,a1)
+                    auxpath1.extend(new)
+                path1.append(auxpath1[i])
+                path2.append(auxpath2[i])
+                if auxpath1[i].getCord() in end_coords_list:
+                    flag1=1
+                    win = n1
+                elif auxpath2[i].getCord() in end_coords_list:
+                    flag2=1
+                    win=n2
+            elif flag1 == 1:
+                path2.append(auxpath2[i])
+            elif flag2 == 1:
+                path1.append(auxpath1[i])
             os.system("clear")
             path.colorRace(path1, path2, maze)
             time.sleep(0.3)
         os.system("clear")
-        return ((path1, path2) ,(self.calculateCost(path1),self.calculateCost(path2)), win)
+        print(repetidos)
+        return ((auxpath1, auxpath2) ,(self.calculateCost(auxpath1),self.calculateCost(auxpath2)), win)
