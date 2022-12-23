@@ -331,10 +331,8 @@ class Grafo:
 
             # encontrado nodo com a menor heuristica
             for v in open_list:
-                for end_c in end_coords_list:
-                    if n is None or self.heuristic(v.getCord(), vel, acc, end_c) < self.heuristic(n.getCord(), vel, acc,
-                                                                                                  end_c):
-                        n = v
+                if n is None or tempheuristica[v]  < tempheuristica[n] :
+                    n = v
             expansao.append(n)
             if n is None:
                 print('Path does not exist!')
