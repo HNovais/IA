@@ -439,9 +439,10 @@ class Grafo:
                     mCord=m.getCord()
                     end_c = self.nearestEnd(mCord,end_list)
                     acc = self.getValues(n.getCord(), m.getCord())
-                    vel = (vel[0] + acc[0], vel[1] + acc[1])
-                    tempheuristica[m]=self.heuristic(m.getCord(), vel, acc, end_c)
-                    velD[m]=vel
+                    ##vel = (vel[0] + acc[0], vel[1] + acc[1])
+                    h=self.heuristic(m.getCord(), vel, acc, end_c)
+                    tempheuristica[m]=h[0]
+                    velD[m]=h[1]
                     accD[m]=acc
 
                     parents[m] = n
@@ -469,7 +470,7 @@ class Grafo:
     def get_pathTotalCost(self, start, n, parents):
         cost = 0
         while n != start:
-            cost += self.getArcCost(n, parents[n])
+            cost += self.getArcCost(parents[n],n)
             n = parents[n]
         return cost
 
@@ -490,12 +491,12 @@ class Grafo:
         totVel = math.sqrt(newVel[0] ** 2 + newVel[1] ** 2)
 
         if (totVel == 0):
-            time = dist
+            time = math.inf
 
         else:
-            time = dist * totVel
+            time = (dist / totVel)
 
-        return time
+        return (time,newVel)
 
     def heuristicaTempo(self, vel, acc):
         end_coords_list = self.get_end_coords_list()
