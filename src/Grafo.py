@@ -12,11 +12,10 @@ class Grafo:
 
     def __init__(self, directed=False):
         self.lnodos = []
+        self.startPos = set()
         self.directed = directed
         self.grafo = {}
         self.heuristicas = {}
-        self.start = "P"
-        self.start2 = "2"
         self.end = "F"
         self.carros = []
 
@@ -52,11 +51,17 @@ class Grafo:
                 peso = 1
             self.grafo[n2].add((n1, peso))
 
-    # Localiza o nodo inicial
-    def getStart(self, node):
+    def getStartPositions(self):
         for start in self.lnodos:
-            if start.type == node:
-                return start
+            if start.type == "P":
+                self.startPos.add(start)
+
+    # Localiza o nodo inicial
+    def getStart(self):
+        for start in self.startPos:
+                pos = start
+                self.startPos.remove(pos)
+                return pos
         return None
 
     def getPrimCarro(self):
@@ -65,7 +70,7 @@ class Grafo:
     def setCarros(self):
         i = 0
         for start in self.lnodos:
-            if start.gettype() == self.start:
+            if start.gettype() == "P":
                 c = Carro(i, start)
                 self.carros.append(c)
                 i += 1
