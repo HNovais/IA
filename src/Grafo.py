@@ -408,6 +408,8 @@ class Grafo:
         tempheuristica=dict()
         velD=dict()
         accD=dict()
+        accD[start]=acc
+        velD[start]=vel
 
         while len(open_list) > 0:
             n = None
@@ -444,9 +446,7 @@ class Grafo:
                 if m not in open_list and m not in closed_list:
                     open_list.add(m)
 
-                    if n is not start:
-                        acc = accD[n]
-                        vel = velD[n]
+                    vel = velD[n]
 
                     mCord=m.getCord()
                     end_c = self.nearestEnd(mCord,end_list)
