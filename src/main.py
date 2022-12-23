@@ -18,7 +18,6 @@ def main():
     g.addEdges(maze)
     g.calculate_heuristic()
     g.setCarros()
-    g.getStartPositions()
 
     # GUI
     saida = -1
@@ -68,12 +67,12 @@ def main():
             g = Grafo()
             maze = file.readlines()
             g.addEdges(maze)
-            g.getStartPositions()
             g.setCarros()
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 6:
             # Efetuar  pesquisa de caminho entre nodo inicial e final com DFS
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -86,6 +85,7 @@ def main():
             os.system("clear")
         elif saida == 7:
             # Efetuar  pesquisa de caminho entre nodo inicial e final com BFS
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -98,6 +98,7 @@ def main():
             os.system("clear")
         elif saida == 8:
             # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -109,7 +110,8 @@ def main():
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 9:
-            # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform~
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -122,6 +124,7 @@ def main():
             os.system("clear")
         elif saida == 10:
             # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -134,6 +137,7 @@ def main():
             os.system("clear")
         elif saida == 11:
             # Efetuar pesquisa de caminho ente nodo inicial e final com Uniform
+            g.getStartPositions()
             inicio = g.getStart()
             fim = g.end
             path = Path()
@@ -145,6 +149,7 @@ def main():
             l = input("prima enter para continuar")
             os.system("clear")
         elif saida == 12:
+            g.getStartPositions()
             inicio = g.getStart()
             inicio2 = g.getStart()
             fim = g.end
