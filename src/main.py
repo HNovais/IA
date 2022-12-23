@@ -156,18 +156,18 @@ def main():
             path = Path()
             print("\n(Escolha segundo os valores acima)")
             a1 = int(input("Algoritmo para o primeiro carro: "))
-            n1 = input("Nome do piloto: ")
+            n1 = input("Nome do(a) piloto(a): ")
             a2 = int(input("Algoritmo para o segundo carro: "))
-            n2 = input("Nome do plioto: ")
+            n2 = input("Nome do(a) plioto(a): ")
             answer = (g.multiplayer(inicio, inicio2, fim, maze, a1, a2, n1, n2))
 
-            print(answer[1][0])
-            print(answer[1][1])
+            print("O algoritmo do(a) "+n1+" teve um custo de "+str(answer[1][0]))
+            print("O algoritmo do(a) "+n2+" teve um custo de "+str(answer[1][1]))
 
             path.colorRace(answer[0][0], answer[0][1], maze)
             print("O Vencedor da corrida é " + answer[2])
 
-            l = input("prima enter para continuar")
+            l = input("\nprima enter para continuar")
             os.system("clear")
         else:
             print("\33[31mOpção inválida...\033[m")

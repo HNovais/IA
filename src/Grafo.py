@@ -320,6 +320,12 @@ class Grafo:
 
         end_coords_list = self.get_end_coords_list()
         nant = start
+
+        end_list = self.get_end_coords_list()
+        tempheuristica=dict()
+        velD=dict()
+        accD=dict()
+
         while len(open_list) > 0:
             n = None
 
@@ -361,6 +367,19 @@ class Grafo:
                     # adiciona-lo à open_list e marcar o antecessor
                     if m not in open_list and m not in closed_list:
                         open_list.add(m)
+
+                        if n is not start:
+                            acc = accD[n]
+                            vel = velD[n]
+
+                        mCord = m.getCord()
+                        end_c = self.nearestEnd(mCord, end_list)
+                        acc = self.getValues(n.getCord(), m.getCord())
+                        h = self.heuristic(m.getCord(), vel, acc, end_c)
+                        tempheuristica[m] = h[0]
+                        velD[m] = h[1]
+                        accD[m] = acc
+
                         parents[m] = n
 
             # remover n da open_list e adiciona-lo à closed_list
@@ -439,7 +458,6 @@ class Grafo:
                     mCord=m.getCord()
                     end_c = self.nearestEnd(mCord,end_list)
                     acc = self.getValues(n.getCord(), m.getCord())
-                    ##vel = (vel[0] + acc[0], vel[1] + acc[1])
                     h=self.heuristic(m.getCord(), vel, acc, end_c)
                     tempheuristica[m]=h[0]
                     velD[m]=h[1]
