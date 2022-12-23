@@ -391,18 +391,18 @@ class Grafo:
         cost = dict()
         cost[start] = 0
 
-        end_coords_list = self.get_end_coords_list()
-        nant = start
+        end_list = self.get_end_coords_list()
+
+        tempheuristica=dict()
+        velD=dict()
+        accD=dict()
+
         while len(open_list) > 0:
             n = None
             # encontrar nodo com a menor heuristica
             for v in open_list:
-                for end_c in end_coords_list:
-                    if n is None or self.heuristic(v.getCord(), vel, acc, end_c) + cost[v] < self.heuristic(n.getCord(),
-                                                                                                            vel, acc,
-                                                                                                            end_c) + \
-                            cost[n]:
-                        n = v
+                if n is None or tempheuristica[v] + cost[v] < tempheuristica[n] + cost[n]:
+                    n = v
             expansao.append(n)
             if n is None:
                 print('Path does not exist!')
@@ -426,17 +426,27 @@ class Grafo:
                 return (expansao, (reconst_path, self.calculateCost(reconst_path)))
 
             # para todos os vizinhos  do nodo corrente
-            if n is not start:
-                acc = self.getValues(nant.getCord(), n.getCord())
-                vel = (vel[0] + acc[0], vel[1] + acc[1])
-                nant = n
             for (m, weight) in self.getNeighbours(n):
                 # Se o nodo corrente nao esta na open nem na closed list
                 # adiciona-lo à open_list e marcar o antecessor
                 if m not in open_list and m not in closed_list:
                     open_list.add(m)
+
+                    if n is not start:
+                        acc = accD[n]
+                        vel = velD[n]
+
+                    mCord=m.getCord()
+                    end_c = self.nearestEnd(mCord,end_list)
+                    acc = self.getValues(n.getCord(), m.getCord())
+                    vel = (vel[0] + acc[0], vel[1] + acc[1])
+                    tempheuristica[m]=self.heuristic(m.getCord(), vel, acc, end_c)
+                    velD[m]=vel
+                    accD[m]=acc
+
                     parents[m] = n
                     cost[m] = self.get_pathTotalCost(start, m, parents)
+
 
             # remover n da open_list e adiciona-lo à closed_list
             # porque todos os seus vizinhos foram inspecionados
@@ -446,6 +456,16 @@ class Grafo:
         print('Path does not exist!')
         return None
 
+    def nearestEnd(self,coord, coords):
+        closest_coord = None
+        closest_distance = float("inf")  # Initialize the closest distance with infinity
+        for c in coords:  # Iterate over the coordinates in the list
+            # Calculate the distance between the given coordinate and the current coordinate
+            distance = math.sqrt((coord[0] - c[0]) ** 2 + (coord[1] - c[1]) ** 2)
+            if distance < closest_distance:  # Update the closest coordinate and distance if the current distance is smaller
+                closest_coord = c
+                closest_distance = distance
+        return closest_coord
     def get_pathTotalCost(self, start, n, parents):
         cost = 0
         while n != start:
@@ -473,7 +493,7 @@ class Grafo:
             time = dist
 
         else:
-            time = dist / totVel
+            time = dist * totVel
 
         return time
 
