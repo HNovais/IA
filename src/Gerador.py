@@ -19,13 +19,12 @@ def guardarEmFicheiro(matriz, file):
         fileaux.write("\n")
     fileaux.close()
 def criarpeca():
-    n = random.randint(1,7)
+    n = random.randint(1,6)
     if n == 1 or n == 2 or n == 3 or n == 4:
         return '-'
     elif n == 5 or n == 6:
         return 'X'
-    elif n == 7:
-        return 'O'
+
 def gerarMapa(file):
     largura = random.randint(10,30)
     comprimento = random.randint(20,50)
