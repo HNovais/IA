@@ -355,10 +355,7 @@ class Grafo:
 
                 return (expansao, (reconst_path, self.calculateCost(reconst_path)))
 
-            if n is not start:
-                acc = self.getValues(nant.getCord(), n.getCord())
-                vel = (vel[0] + acc[0], vel[1] + acc[1])
-                nant = n
+
             if n.gettype() != "X":
                 # para todos os vizinhos  do nodo corrente
                 for (m, weight) in self.getNeighbours(n):
