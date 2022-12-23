@@ -111,7 +111,7 @@ def main():
             inicio = g.getStart(g.start)
             fim = g.end
             path = Path()
-            answer = (g.dijkstra_algorithm(inicio, fim))
+            answer = (g.Dijkstra(inicio, fim))
             print((answer[0], 0))
             path.colorPath((answer[0], 0), maze)
             print(answer[1])

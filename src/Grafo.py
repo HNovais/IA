@@ -1,4 +1,5 @@
 import math
+import heapq
 import os
 import time
 from Nodo import Nodo
@@ -244,43 +245,58 @@ class Grafo:
             custoT = self.calculateCost(path)
             return (expansao, (path, custoT))
 
-    def dijkstra_algorithm(self, start, end):
-        q = list()
-        q.append((start, 0))
+    
+    def Dijkstra(self, start, end):
+        # Inicializa a fila de prioridade com a distância e o nó inicial
+        q = [(0, start)]
 
-        visited = list()
-        visited.append(start)
-        expansao = list()
-        p = {}
-        p[start] = None
+        # Inicializa os dicionários de distâncias e nós anteriores com entradas para o nó inicial  
+        distances = {start: 0}  
+        previous = {start: None}  
 
-        pathFound = False
-        while len(q) > 0:
-            q.sort(key=lambda x: x[1])
-            n = q.pop(0)
-            expansao.append(n[0])
-            if n[0].gettype() == end:
-                expansao.pop()
-                pathFound = True
-            else:
-                if n[0].gettype() != 'X':
-                    for (adjacent, cost) in self.grafo[n[0]]:
-                        if adjacent not in visited:
-                            visited.append(adjacent)
-                            q.append((adjacent, n[1] + self.getArcCost(n[0], adjacent)))
-                            p[adjacent] = n[0]
-                        if adjacent.gettype() == end:
-                            endNode = adjacent
-                            pathFound = True
-        path = []
-        if pathFound == True:
-            path.append(endNode)
-            while p[endNode] is not None:
-                path.append(p[endNode])
-                endNode = p[endNode]
-            path.reverse()
-            custoT = self.calculateCost(path)
-            return (expansao, (path, custoT))
+        # Inicializa a lista de nós visitados
+        visited = []  
+
+        # Enquanto houver nós na fila de prioridade
+        while q:  
+            # Seleciona o nó com a menor distância
+            distance, node = heapq.heappop(q)
+
+            # Pula o nó se ele já foi visitado
+            if node in visited:
+                continue  
+
+            # Adiciona o nó à lista de nós visitados
+            visited.append(node) 
+
+            # Se o tipo do nó é igual ao tipo do destino, reconstrói o caminho mais curto e retorna a distância 
+            if node.gettype() == end:  
+                # Reconstrói o caminho mais curto
+                path = []
+                current = node
+                while current is not None:
+                    path.append(current)
+                    current = previous[current]
+                path = path[::-1]         
+
+                # Calcula o custo total do caminho       
+                cost = self.calculateCost(path)
+                return (visited, (path, cost))
+            
+            # Atualiza as distâncias dos vizinhos
+            for adjacent, cost in self.grafo[node]:
+                if adjacent not in visited:
+                    alt = distance + self.getArcCost(node, adjacent)
+                    if alt < distances.get(adjacent, float('inf')):
+                        distances[adjacent] = alt
+                        previous[adjacent] = node
+                        heapq.heappush(q, (alt, adjacent))
+
+        # Se o destino não foi alcançado, retorna -1 para indicar que o destino não é alcançável
+        return (visited, -1)
+
+
+
 
     def greedy(self, start, end_name, vel=(0, 0), acc=(0, 0)):
         # open_list é uma lista de nodos visitados, mas com vizinhos
@@ -509,7 +525,7 @@ class Grafo:
             answer1 = self.Uniform(pos, end)
             auxpath = answer1[1][0]
         elif a == 9:
-            answer1 = self.dijkstra_algorithm(pos, end)
+            answer1 = self.Dijkstra(pos, end)
             auxpath = answer1[1][0]
         elif a == 10:
             answer1 = self.greedy(pos, end)

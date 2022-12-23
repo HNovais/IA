@@ -36,3 +36,6 @@ class Nodo:
 
     def __hash__(self):
         return hash(self.cord)
+
+    def __lt__(self, other):
+        return self.type < other.type
