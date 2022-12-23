@@ -318,20 +318,21 @@ class Grafo:
         parents = dict()
         parents[start] = start
 
-        end_coords_list = self.get_end_coords_list()
         nant = start
 
         end_list = self.get_end_coords_list()
         tempheuristica=dict()
         velD=dict()
         accD=dict()
+        accD[start]=acc
+        velD[start]=vel
 
         while len(open_list) > 0:
             n = None
 
             # encontrado nodo com a menor heuristica
             for v in open_list:
-                if n is None or tempheuristica[v]  < tempheuristica[n] :
+                if n is None or tempheuristica[v]  < tempheuristica[n]:
                     n = v
             expansao.append(n)
             if n is None:
@@ -366,10 +367,7 @@ class Grafo:
                     if m not in open_list and m not in closed_list:
                         open_list.add(m)
 
-                        if n is not start:
-                            acc = accD[n]
-                            vel = velD[n]
-
+                        vel = velD[n]
                         mCord = m.getCord()
                         end_c = self.nearestEnd(mCord, end_list)
                         acc = self.getValues(n.getCord(), m.getCord())
