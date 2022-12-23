@@ -6,6 +6,7 @@ from queue import Queue, PriorityQueue
 from Carro import Carro
 from Path import Path
 
+
 class Grafo:
 
     def __init__(self, directed=False):
@@ -25,9 +26,9 @@ class Grafo:
         return out
 
     # Adiciona arco
-    def addEdge(self, node1,x1,y1, node2,x2,y2):
-        n1 = Nodo(node1,x1,y1)
-        n2 = Nodo(node2,x2,y2)
+    def addEdge(self, node1, x1, y1, node2, x2, y2):
+        n1 = Nodo(node1, x1, y1)
+        n2 = Nodo(node2, x2, y2)
         peso = 1
 
         if node2 == "X":
@@ -41,12 +42,13 @@ class Grafo:
             self.lnodos.append(n2)
             self.grafo[n2] = set()
 
-        self.grafo[n1].add((n2,peso))
+        self.grafo[n1].add((n2, peso))
 
         if not self.directed:
             if node1 == "X":
                 peso = 25
-            else:peso = 1
+            else:
+                peso = 1
             self.grafo[n2].add((n1, peso))
 
     # Localiza o nodo inicial
@@ -63,7 +65,7 @@ class Grafo:
         i = 0
         for start in self.lnodos:
             if start.gettype() == self.start:
-                c = Carro(i,start)
+                c = Carro(i, start)
                 self.carros.append(c)
                 i += 1
 
@@ -71,7 +73,7 @@ class Grafo:
     def getArcCost(self, node1, node2):
         custoT = math.inf
         a = self.grafo[node1]
-        if node1==node2:
+        if node1 == node2:
             return 0
         for (node, cost) in a:
             if node == node2:
@@ -81,12 +83,12 @@ class Grafo:
 
     # Calcula o custo do caminho encontrado
     def calculateCost(self, path):
-        teste = path 
+        teste = path
         cost = 0
         i = 0
         while i + 1 < len(teste):
-             cost = cost + self.getArcCost(teste[i], teste[i+1])
-             i = i + 1
+            cost = cost + self.getArcCost(teste[i], teste[i + 1])
+            i = i + 1
         return cost
 
     def add_heuristica(self, n, heuristca):
@@ -94,7 +96,7 @@ class Grafo:
         if n1 in self.m_nodes:
             self.heuristicas[n] = heuristca
 
-    def manhattan_dist(self,c1, c2):
+    def manhattan_dist(self, c1, c2):
         return math.fabs(c1[0] - c2[0]) + math.fabs(c1[1] - c2[1])
 
     def get_end_coords_list(self):
@@ -149,7 +151,7 @@ class Grafo:
             j = j + 1
 
     # Algoritmo de procura DFS
-    def DFSSearch(self, start, end, path=[],expansao=list(), visited=set()):
+    def DFSSearch(self, start, end, path=[], expansao=list(), visited=set()):
         path.append(start)
         expansao.append(start)
         visited.add(start)
@@ -157,14 +159,14 @@ class Grafo:
         if start.gettype() == end:
             expansao.pop()
             custoT = self.calculateCost(path)
-            return (expansao,(path, custoT))
+            return (expansao, (path, custoT))
         if start.gettype() != 'X':
             for (adjacente, peso) in self.grafo[start]:
                 if adjacente not in visited:
-                    resultado = self.DFSSearch(adjacente, end, path, expansao,visited)
+                    resultado = self.DFSSearch(adjacente, end, path, expansao, visited)
                     if resultado is not None:
                         return resultado
-        path.pop()  
+        path.pop()
         return None
 
     # Algoritmo de procura BFS
@@ -202,11 +204,11 @@ class Grafo:
                 endNode = p[endNode]
             path.reverse()
             custoT = self.calculateCost(path)
-            return (expansao,(path, custoT))
+            return (expansao, (path, custoT))
 
     def Uniform(self, start, end):
         q = list()
-        q.append((start,0))
+        q.append((start, 0))
 
         visited = list()
         visited.append(start)
@@ -215,7 +217,7 @@ class Grafo:
         p[start] = None
 
         pathFound = False
-        while len(q)>0 and pathFound == False:
+        while len(q) > 0 and pathFound == False:
             q.sort(key=lambda x: x[1])
             n = q.pop(0)
             expansao.append(n[0])
@@ -227,7 +229,7 @@ class Grafo:
                     for (adjacent, cost) in self.grafo[n[0]]:
                         if adjacent not in visited:
                             visited.append(adjacent)
-                            q.append((adjacent,n[1]+self.getArcCost(n[0],adjacent)))
+                            q.append((adjacent, n[1] + self.getArcCost(n[0], adjacent)))
                             p[adjacent] = n[0]
                         if adjacent.gettype() == end:
                             endNode = adjacent
@@ -240,7 +242,7 @@ class Grafo:
                 endNode = p[endNode]
             path.reverse()
             custoT = self.calculateCost(path)
-            return (expansao,(path, custoT))
+            return (expansao, (path, custoT))
 
     def dijkstra_algorithm(self, start, end):
         q = list()
@@ -280,8 +282,7 @@ class Grafo:
             custoT = self.calculateCost(path)
             return (expansao, (path, custoT))
 
-
-    def greedy(self, start, end_name,vel=(0,0),acc=(0,0)):
+    def greedy(self, start, end_name, vel=(0, 0), acc=(0, 0)):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
         # closed_list é uma lista de nodos visitados
@@ -304,7 +305,8 @@ class Grafo:
             # encontrado nodo com a menor heuristica
             for v in open_list:
                 for end_c in end_coords_list:
-                    if n is None or self.heuristic(v.getCord(),vel,acc,end_c) < self.heuristic(n.getCord(),vel,acc,end_c) :
+                    if n is None or self.heuristic(v.getCord(), vel, acc, end_c) < self.heuristic(n.getCord(), vel, acc,
+                                                                                                  end_c):
                         n = v
             expansao.append(n)
             if n is None:
@@ -325,12 +327,12 @@ class Grafo:
 
                 reconst_path.reverse()
 
-                return (expansao,(reconst_path, self.calculateCost(reconst_path)))
+                return (expansao, (reconst_path, self.calculateCost(reconst_path)))
 
             if n is not start:
                 acc = self.getValues(nant.getCord(), n.getCord())
-                vel = (vel[0]+acc[0], vel[1]+ acc[1])
-                nant=n
+                vel = (vel[0] + acc[0], vel[1] + acc[1])
+                nant = n
             if n.gettype() != "X":
                 # para todos os vizinhos  do nodo corrente
                 for (m, weight) in self.getNeighbours(n):
@@ -348,7 +350,7 @@ class Grafo:
         print('Path does not exist!')
         return None
 
-    def AStar(self, start, end,vel=(0,0),acc=(0,0)):
+    def AStar(self, start, end, vel=(0, 0), acc=(0, 0)):
         # open_list é uma lista de nodos visitados, mas com vizinhos
         # que ainda não foram todos visitados, começa com o  start
         # closed_list é uma lista de nodos visitados
@@ -375,7 +377,10 @@ class Grafo:
             # encontrar nodo com a menor heuristica
             for v in open_list:
                 for end_c in end_coords_list:
-                    if n is None or self.heuristic(v.getCord(),vel,acc,end_c) + cost[v] < self.heuristic(n.getCord(),vel,acc,end_c) + cost[n]:
+                    if n is None or self.heuristic(v.getCord(), vel, acc, end_c) + cost[v] < self.heuristic(n.getCord(),
+                                                                                                            vel, acc,
+                                                                                                            end_c) + \
+                            cost[n]:
                         n = v
             expansao.append(n)
             if n is None:
@@ -397,16 +402,16 @@ class Grafo:
 
                 reconst_path.reverse()
 
-                return (expansao,(reconst_path, self.calculateCost(reconst_path)))
+                return (expansao, (reconst_path, self.calculateCost(reconst_path)))
 
             # para todos os vizinhos  do nodo corrente
             if n is not start:
                 acc = self.getValues(nant.getCord(), n.getCord())
-                vel = (vel[0]+acc[0], vel[1]+ acc[1])
-                nant=n
+                vel = (vel[0] + acc[0], vel[1] + acc[1])
+                nant = n
             for (m, weight) in self.getNeighbours(n):
-                    # Se o nodo corrente nao esta na open nem na closed list
-                    # adiciona-lo à open_list e marcar o antecessor
+                # Se o nodo corrente nao esta na open nem na closed list
+                # adiciona-lo à open_list e marcar o antecessor
                 if m not in open_list and m not in closed_list:
                     open_list.add(m)
                     parents[m] = n
@@ -451,13 +456,12 @@ class Grafo:
 
         return time
 
-
-    def heuristicaTempo(self,vel,acc):
+    def heuristicaTempo(self, vel, acc):
         end_coords_list = self.get_end_coords_list()
         for node in self.lnodos:
             node_c = node.getCord()
             for end_c in end_coords_list:
-                time = self.heuristic(node_c,vel,acc,end_c)
+                time = self.heuristic(node_c, vel, acc, end_c)
                 if node not in self.heuristicas:
                     self.heuristicas[node] = time
                 elif self.heuristicas[node] > time:
@@ -493,10 +497,10 @@ class Grafo:
 
         return acc
 
-    def escolhaAlgoritmo(self,pos,end,a):
+    def escolhaAlgoritmo(self, pos, end, a):
         auxpath = list()
         if a == 6:
-            answer1 = self.DFSSearch(pos, end, path=[],expansao=list(),visited=set())
+            answer1 = self.DFSSearch(pos, end, path=[], expansao=list(), visited=set())
             auxpath = answer1[1][0]
         elif a == 7:
             answer1 = self.BFSSearch(pos, end)
@@ -511,11 +515,11 @@ class Grafo:
             answer1 = self.greedy(pos, end)
             auxpath = answer1[1][0]
         elif a == 11:
-            answer1=self.AStar(pos,end)
+            answer1 = self.AStar(pos, end)
             auxpath = answer1[1][0]
-        return  auxpath
+        return auxpath
 
-    def multiplayer (self, start, start2, end, maze,a1,a2,n1,n2):
+    def multiplayer(self, start, start2, end, maze, a1, a2, n1, n2):
         pos1 = start
         pos2 = start2
 
@@ -523,36 +527,50 @@ class Grafo:
         path2 = list()
         flag1 = 0
         flag2 = 0
-
+        acc1 = (0, 0)
+        acc2 = (0, 0)
+        vel1 = (0, 0)
+        vel2 = (0, 0)
         win = ""
 
         path = Path()
 
-        auxpath1 = self.escolhaAlgoritmo(pos1,end,a1)
+        auxpath1 = self.escolhaAlgoritmo(pos1, end, a1)
         auxpath2 = self.escolhaAlgoritmo(pos2, end, a2)
 
         end_coords_list = self.get_end_coords_list()
 
         repetidos = set()
 
-
-        for i in range(max(len(auxpath1),len(auxpath2))):
+        for i in range(max(len(auxpath1), len(auxpath2))):
             if flag1 == 0 and flag2 == 0:
                 if auxpath1[i] == auxpath2[i]:
                     repetidos.add(auxpath1[i])
 
-                    auxpath1[i]=auxpath1[i-1]
-                    del auxpath1[i:]
-                    new=self.escolhaAlgoritmo(auxpath1[i-1],end,a1)
-                    auxpath1.extend(new)
+                    if (vel2 > vel1):
+                        del auxpath1[i:]
+                        new = self.escolhaAlgoritmo(auxpath1[i - 1], end, a1)
+                        auxpath1.extend(new)
+                    else:
+                        del auxpath2[i:]
+                        new = self.escolhaAlgoritmo(auxpath2[i - 1], end, a2)
+                        auxpath2.extend(new)
+
                 path1.append(auxpath1[i])
                 path2.append(auxpath2[i])
+
+                if i != 0:
+                    acc1 = self.getValues(auxpath1[i - 1].getCord(), auxpath1[i].getCord())
+                    acc2 = self.getValues(auxpath2[i - 1].getCord(), auxpath2[i].getCord())
+                vel1 = (vel1[0] + acc1[0], vel1[1] + acc1[1])
+                vel2 = (vel2[0] + acc2[0], vel2[1] + acc2[1])
+
                 if auxpath1[i].getCord() in end_coords_list:
-                    flag1=1
+                    flag1 = 1
                     win = n1
                 elif auxpath2[i].getCord() in end_coords_list:
-                    flag2=1
-                    win=n2
+                    flag2 = 1
+                    win = n2
             elif flag1 == 1:
                 path2.append(auxpath2[i])
             elif flag2 == 1:
@@ -562,4 +580,4 @@ class Grafo:
             time.sleep(0.3)
         os.system("clear")
         print(repetidos)
-        return ((auxpath1, auxpath2) ,(self.calculateCost(auxpath1),self.calculateCost(auxpath2)), win)
+        return ((auxpath1, auxpath2), (self.calculateCost(auxpath1), self.calculateCost(auxpath2)), win)
