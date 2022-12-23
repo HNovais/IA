@@ -625,15 +625,19 @@ class Grafo:
                 vel1 = (vel1[0] + acc1[0], vel1[1] + acc1[1])
                 vel2 = (vel2[0] + acc2[0], vel2[1] + acc2[1])
 
-                if auxpath1[i].getCord() in end_coords_list:
+                if auxpath1[i].getCord() in end_coords_list and auxpath2[i].getCord() in end_coords_list:
+                    flag1 = 1
+                    flag2 = 1
+                    win = "empate"
+                elif auxpath1[i].getCord() in end_coords_list:
                     flag1 = 1
                     win = n1
                 elif auxpath2[i].getCord() in end_coords_list:
                     flag2 = 1
                     win = n2
-            elif flag1 == 1:
+            elif flag2 == 0:
                 path2.append(auxpath2[i])
-            elif flag2 == 1:
+            elif flag1 == 0:
                 path1.append(auxpath1[i])
             os.system("clear")
             path.colorRace(path1, path2, maze)
