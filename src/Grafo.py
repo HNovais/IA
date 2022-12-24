@@ -4,7 +4,6 @@ import os
 import time
 from Nodo import Nodo
 from queue import Queue, PriorityQueue
-from Carro import Carro
 from Path import Path
 
 
@@ -63,17 +62,6 @@ class Grafo:
                 self.startPos.remove(pos)
                 return pos
         return None
-
-    def getPrimCarro(self):
-        return self.carros[0]
-
-    def setCarros(self):
-        i = 0
-        for start in self.lnodos:
-            if start.gettype() == "P":
-                c = Carro(i, start)
-                self.carros.append(c)
-                i += 1
 
     # Retorna o custo do arco
     def getArcCost(self, node1, node2):

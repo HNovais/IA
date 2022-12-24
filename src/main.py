@@ -17,7 +17,6 @@ def main():
     # Adiciona as ligações entre nodos
     g.addEdges(maze)
     g.calculate_heuristic()
-    g.setCarros()
 
     # GUI
     saida = -1
