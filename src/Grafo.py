@@ -497,16 +497,6 @@ class Grafo:
 
         return (time,newVel)
 
-    def heuristicaTempo(self, vel, acc):
-        end_coords_list = self.get_end_coords_list()
-        for node in self.lnodos:
-            node_c = node.getCord()
-            for end_c in end_coords_list:
-                time = self.heuristic(node_c, vel, acc, end_c)
-                if node not in self.heuristicas:
-                    self.heuristicas[node] = time
-                elif self.heuristicas[node] > time:
-                    self.heuristicas[node] = time
 
     def getValues(self, start, last):
         s = start
