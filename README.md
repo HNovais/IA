@@ -1,7 +1,12 @@
-# IA - Grupo 24
+# Algoritmos de Procura para VectorRace
 
-Hugo Novais - a96267
+Trabalho prático da UC de Inteligência Artificial
 
-Rui Silva - a97133
+<b> Grupo 19 </b>
+* Hugo Novais - a96267 <br>
+* Rui Sila - a97133 <br>
+* Telmo Oliveira - aXXXXX <br>
 
-Telmo Oliveira - a97018
+<b> LEI - Universidade do Minho - 22/23 </b>
+
+<b> Nota Final - 18 </b>
