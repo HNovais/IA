@@ -2,7 +2,7 @@
 
 Trabalho prático da UC de Inteligência Artificial
 
-<b> Grupo 19 </b>
+<b> Grupo 24 </b>
 * Hugo Novais - a96267 <br>
 * Rui Sila - a97133 <br>
 * Telmo Oliveira - aXXXXX <br>
